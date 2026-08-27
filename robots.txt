@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sm5211.github.io/banya-euforia/sitemap.xml

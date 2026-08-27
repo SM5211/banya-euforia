@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#120E0B"/>
+  <!-- струйка пара -->
+  <path d="M32 12c6 4 6 8 2 12s-4 8 2 12" fill="none" stroke="#E8EEF0" stroke-opacity=".55"
+        stroke-width="3" stroke-linecap="round"/>
+  <!-- тёплая вода -->
+  <path d="M12 44c5-4 9-4 14 0s9 4 14 0 9-4 12 0v10H12z" fill="#E0913F"/>
+  <path d="M12 50c5-4 9-4 14 0s9 4 14 0 9-4 12 0v6H12z" fill="#F2B75C"/>
+</svg>
