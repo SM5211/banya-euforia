@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://banya-euforia.ru/sitemap.xml

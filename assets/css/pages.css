@@ -1,0 +1,468 @@
+/* ==========================================================================
+   Стили внутренних страниц: услуги, галерея, о нас, контакты.
+   Лайтбокс и форма брони — тоже здесь.
+   ========================================================================== */
+
+/* --- Шапка внутренней страницы ------------------------------------------- */
+
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: calc(var(--header-h) + clamp(3rem, 8vh, 5.5rem)) clamp(3rem, 8vh, 5rem);
+  background: linear-gradient(170deg, #211913, var(--c-bg) 70%);
+}
+
+.page-hero__steam {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.6s ease-out;
+}
+.page-hero__steam.is-ready { opacity: 1; }
+
+.page-hero__inner { position: relative; z-index: 1; }
+.page-hero h1 { max-width: 20ch; }
+.page-hero .lead { margin-top: 1rem; }
+
+/* Хлебные крошки */
+.crumbs {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--c-text-dim);
+  margin-bottom: 1.4rem;
+}
+.crumbs a:hover { color: var(--c-accent-soft); }
+
+/* --- Цены ----------------------------------------------------------------- */
+
+.price {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+  padding: clamp(1.8rem, 4vw, 3rem);
+  border: 1px solid rgba(224, 145, 63, 0.35);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(90% 120% at 90% 10%, rgba(224, 145, 63, 0.14), transparent 60%),
+    var(--c-bg-3);
+}
+
+.price__value {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 1.8rem + 3vw, 4rem);
+  line-height: 1;
+  color: var(--c-accent-soft);
+}
+.price__unit { font-size: 0.35em; color: var(--c-text-muted); }
+.price__note { margin-top: 0.8rem; color: var(--c-text-muted); }
+
+.price__list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+.price__list li { display: flex; gap: 0.7rem; align-items: flex-start; }
+.price__list li::before {
+  content: '✓';
+  color: var(--c-accent);
+  font-weight: 700;
+  flex: none;
+}
+
+/* --- Услуги списком ------------------------------------------------------- */
+
+.service {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  padding-block: clamp(2rem, 5vh, 3rem);
+  border-top: 1px solid var(--c-line);
+  align-items: start;
+}
+
+.service__title { margin-bottom: 0.4rem; }
+.service__meta { color: var(--c-accent); font-size: 0.85rem; letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* --- Шаги «как забронировать» -------------------------------------------- */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.6rem);
+  counter-reset: step;
+}
+
+.step { position: relative; padding-top: 2.6rem; }
+
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  top: 0; left: 0;
+  width: 40px; height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(224, 145, 63, 0.5);
+  color: var(--c-accent-soft);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+
+.step h3 { font-size: 1.15rem; margin-bottom: 0.4rem; }
+.step p { color: var(--c-text-muted); font-size: 0.96rem; margin: 0; }
+
+/* --- Галерея -------------------------------------------------------------- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+}
+
+.filter {
+  padding: 0.55rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--c-line);
+  background: transparent;
+  color: var(--c-text-muted);
+  cursor: pointer;
+  font-size: 0.92rem;
+  transition: border-color var(--t-fast) var(--ease-out),
+              color var(--t-fast) var(--ease-out),
+              background var(--t-fast) var(--ease-out);
+}
+.filter:hover { border-color: var(--c-accent); color: var(--c-text); }
+.filter.is-active {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  color: #180F06;
+  font-weight: 600;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: clamp(0.7rem, 1.6vw, 1.1rem);
+}
+
+.gallery__item {
+  position: relative;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: transform var(--t-med) var(--ease-out),
+              box-shadow var(--t-med) var(--ease-out);
+}
+.gallery__item:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft); }
+.gallery__item .media-ph { min-height: 200px; border-radius: var(--radius-sm); }
+.gallery__item img { width: 100%; height: 100%; object-fit: cover; }
+
+.gallery__caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 2.2rem 0.9rem 0.8rem;
+  background: linear-gradient(to top, rgba(18, 14, 11, 0.9), transparent);
+  font-size: 0.85rem;
+  text-align: left;
+  color: var(--c-text);
+  opacity: 0;
+  transition: opacity var(--t-med) var(--ease-out);
+}
+.gallery__item:hover .gallery__caption { opacity: 1; }
+
+/* --- Лайтбокс ------------------------------------------------------------- */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--t-med) var(--ease-out), visibility var(--t-med);
+}
+.lightbox.is-open { opacity: 1; visibility: visible; }
+
+.lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 8, 6, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.lightbox__dialog {
+  position: relative;
+  width: min(1100px, 92vw);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transform: scale(0.97);
+  transition: transform var(--t-med) var(--ease-out);
+}
+.lightbox.is-open .lightbox__dialog { transform: scale(1); }
+
+.lightbox__figure {
+  flex: 1;
+  margin: 0;
+  min-width: 0;
+}
+
+.lightbox__media {
+  border-radius: var(--radius);
+  overflow: hidden;
+  max-height: 78vh;
+  display: grid;
+  place-items: center;
+  background: var(--c-bg-3);
+}
+.lightbox__media img,
+.lightbox__media video { max-height: 78vh; width: auto; max-width: 100%; }
+
+/* В лайтбоксе показываем кадр целиком, без квадратной обрезки из сетки */
+.lightbox__media .photo {
+  aspect-ratio: auto;
+  object-fit: contain;
+  height: auto;
+  width: auto;
+}
+.lightbox__media .media-ph { width: 100%; min-height: 60vh; }
+
+.lightbox__caption {
+  margin-top: 0.9rem;
+  text-align: center;
+  color: var(--c-text-muted);
+  font-size: 0.92rem;
+}
+
+.lightbox__close,
+.lightbox__nav {
+  border: 1px solid var(--c-line);
+  background: rgba(36, 28, 22, 0.85);
+  color: var(--c-text);
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: border-color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out);
+}
+.lightbox__close:hover,
+.lightbox__nav:hover { border-color: var(--c-accent); background: rgba(224, 145, 63, 0.18); }
+
+.lightbox__close {
+  position: absolute;
+  top: -3rem; right: 0;
+  width: 42px; height: 42px;
+  font-size: 1rem;
+}
+
+.lightbox__nav { width: 46px; height: 46px; font-size: 1.6rem; flex: none; line-height: 1; }
+
+@media (max-width: 700px) {
+  .lightbox__nav { position: absolute; bottom: -3.6rem; }
+  .lightbox__nav--prev { left: 25%; }
+  .lightbox__nav--next { right: 25%; }
+  .lightbox__dialog { flex-direction: column; }
+}
+
+/* --- Меню кафе ------------------------------------------------------------ */
+
+.menu-note {
+  color: var(--c-text-muted);
+  font-size: 0.95rem;
+  margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+}
+.menu-note a { color: var(--c-accent-soft); }
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.8rem);
+}
+
+.menu-card {
+  background: var(--c-bg-3);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: clamp(1.4rem, 3vw, 2rem);
+}
+
+.menu-card__title {
+  font-size: 1.3rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--c-line);
+  color: var(--c-accent-soft);
+}
+
+.menu-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+
+/* Строка меню: название — отточие — цена */
+.menu-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.97rem;
+}
+
+.menu-list__name { color: var(--c-text); }
+
+.menu-list__dots {
+  flex: 1;
+  height: 1px;
+  margin-bottom: 0.25em;
+  border-bottom: 1px dotted rgba(232, 238, 240, 0.25);
+}
+
+.menu-list__price {
+  color: var(--c-text-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Форма брони ---------------------------------------------------------- */
+
+.booking {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.form {
+  background: var(--c-bg-3);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: clamp(1.5rem, 3.5vw, 2.4rem);
+}
+
+.form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.field { display: flex; flex-direction: column; gap: 0.4rem; }
+.field--full { grid-column: 1 / -1; }
+
+.field label { font-size: 0.85rem; color: var(--c-text-muted); }
+.field label .req { color: var(--c-accent); }
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-line);
+  background: rgba(18, 14, 11, 0.6);
+  color: var(--c-text);
+  transition: border-color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out);
+}
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--c-accent);
+  background: rgba(18, 14, 11, 0.9);
+}
+.field textarea { resize: vertical; min-height: 96px; }
+
+/* иконка календаря/часов в тёмной теме */
+.field input[type="date"]::-webkit-calendar-picker-indicator,
+.field input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
+
+.field__error { font-size: 0.8rem; color: #E98A7A; min-height: 1em; }
+.field.has-error input,
+.field.has-error textarea { border-color: #E98A7A; }
+
+.form__foot {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.form__policy { font-size: 0.8rem; color: var(--c-text-dim); }
+
+/* Запасное поле с текстом заявки — показывается, если буфер обмена недоступен */
+.copy-box {
+  border: 1px solid rgba(224, 145, 63, 0.4);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1rem;
+  background: rgba(224, 145, 63, 0.07);
+}
+
+.copy-box__title { font-size: 0.88rem; color: var(--c-text-muted); margin-bottom: 0.6rem; }
+
+.copy-box textarea {
+  width: 100%;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-sm);
+  background: rgba(18, 14, 11, 0.7);
+  color: var(--c-text);
+  padding: 0.8rem 0.9rem;
+  font-size: 0.92rem;
+  resize: vertical;
+}
+
+.form-status { font-size: 0.92rem; min-height: 1.2em; }
+.form-status.is-success { color: #7FBF8A; }
+.form-status.is-error { color: #E98A7A; }
+.form-status.is-pending { color: var(--c-text-muted); }
+
+/* Быстрая связь рядом с формой */
+.contact-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+.contact-actions .btn { justify-content: flex-start; }
+
+/* --- О нас ---------------------------------------------------------------- */
+
+.about__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.values {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.6rem);
+  margin-top: clamp(2.5rem, 6vh, 4rem);
+}
+
+/* --- Адаптив -------------------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .price,
+  .service,
+  .booking,
+  .about__grid { grid-template-columns: 1fr; }
+  .form__grid { grid-template-columns: 1fr; }
+  .lightbox__close { top: -2.6rem; }
+}
+
+@media (max-width: 700px) {
+  /* на телефоне не оставляем большую пустоту между шапкой страницы и контентом */
+  .page-hero { padding-bottom: 1.5rem; }
+  .page-hero + .section { padding-top: 2.5rem; }
+  .contact-actions .btn { font-size: 0.92rem; padding-inline: 1.2rem; }
+}

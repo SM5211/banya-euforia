@@ -1,0 +1,198 @@
+/* ==========================================================================
+   Компоненты: кнопки с эффектом «круги на воде», карточки, плейсхолдеры медиа
+   ========================================================================== */
+
+/* --- Кнопки --------------------------------------------------------------- */
+
+.btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem 1.9rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  text-align: center;
+  transition: transform var(--t-fast) var(--ease-out),
+              box-shadow var(--t-med) var(--ease-out),
+              border-color var(--t-fast) var(--ease-out),
+              background var(--t-fast) var(--ease-out);
+}
+
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+
+.btn--primary {
+  background: linear-gradient(140deg, var(--c-accent-soft), var(--c-accent-deep));
+  color: #180F06;
+  box-shadow: 0 12px 30px -16px rgba(224, 145, 63, 0.9);
+}
+/* Тёплое свечение на hover — «свет из парной» */
+.btn--primary:hover { box-shadow: var(--glow-warm), 0 18px 36px -18px rgba(224, 145, 63, 0.9); }
+
+.btn--ghost {
+  background: rgba(232, 238, 240, 0.04);
+  border-color: var(--c-line);
+  color: var(--c-text);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.btn--ghost:hover { border-color: var(--c-steam); background: rgba(232, 238, 240, 0.1); }
+
+.btn--lg { padding: 1.15rem 2.3rem; font-size: 1.05rem; }
+.btn--block { width: 100%; }
+
+.btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+/* Рябь на воде: круг расходится из точки клика (js/fx/ripple.js) */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle,
+              rgba(255, 255, 255, 0.55) 0%,
+              rgba(255, 255, 255, 0.18) 45%,
+              rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  z-index: -1;
+  animation: ripple-out 0.75s var(--ease-out) forwards;
+}
+
+@keyframes ripple-out {
+  to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+/* --- Карточки ------------------------------------------------------------- */
+
+.card {
+  position: relative;
+  background: var(--c-bg-3);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: clamp(1.5rem, 3vw, 2.2rem);
+  overflow: hidden;
+  transition: transform var(--t-med) var(--ease-out),
+              border-color var(--t-med) var(--ease-out),
+              box-shadow var(--t-med) var(--ease-out);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: -40% 50% 60% -40%;
+  background: radial-gradient(circle, rgba(224, 145, 63, 0.22), transparent 70%);
+  opacity: 0;
+  transition: opacity var(--t-med) var(--ease-out);
+  pointer-events: none;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(224, 145, 63, 0.4);
+  box-shadow: var(--shadow-soft);
+}
+.card:hover::before { opacity: 1; }
+
+.card__icon {
+  width: 46px; height: 46px;
+  margin-bottom: 1.2rem;
+  color: var(--c-accent);
+}
+.card__icon svg { width: 100%; height: 100%; stroke: currentColor; fill: none; stroke-width: 1.2; }
+
+.card__title { font-size: 1.3rem; margin-bottom: 0.5rem; }
+.card__text { color: var(--c-text-muted); font-size: 0.97rem; margin: 0; }
+
+/* --- Реальные фото -------------------------------------------------------- */
+/* Пропорции задаются модификатором, кадр всегда заполняется без искажений */
+
+.photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: var(--c-bg-3);
+}
+
+.photo--wide { aspect-ratio: 16 / 10; }
+.photo--tall { aspect-ratio: 3 / 4; }
+.photo--square { aspect-ratio: 1 / 1; }
+.photo--flat { border-radius: 0; }
+
+/* --- Плейсхолдеры под реальные фото/видео -------------------------------- */
+/* Всё, что размечено .media-ph, потом заменяется на <img>/<video>.
+   Список замен — в README.md */
+
+.media-ph {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(232, 238, 240, 0.035) 0 12px,
+      rgba(232, 238, 240, 0) 12px 24px),
+    linear-gradient(160deg, #2A211A, #16110D);
+  border: 1px dashed rgba(232, 238, 240, 0.18);
+  color: var(--c-text-dim);
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.media-ph__label {
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  max-width: 26ch;
+}
+
+.media-ph--tall { aspect-ratio: 3 / 4; }
+.media-ph--wide { aspect-ratio: 16 / 10; }
+.media-ph--square { aspect-ratio: 1 / 1; }
+
+/* --- Цифры/счётчики ------------------------------------------------------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.stat__value {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 1.8rem + 3vw, 4rem);
+  line-height: 1;
+  color: var(--c-accent-soft);
+  display: flex;
+  align-items: baseline;
+  gap: 0.15em;
+}
+
+.stat__suffix { font-size: 0.45em; color: var(--c-text-muted); }
+.stat__prefix { font-size: 0.42em; color: var(--c-text-muted); }
+
+/* число с приставкой и подписью не должно разрываться на две строки */
+.stat__value { white-space: nowrap; }
+
+.stat__label {
+  margin-top: 0.7rem;
+  color: var(--c-text-muted);
+  font-size: 0.95rem;
+}
+
+/* --- Появление блоков при скролле ---------------------------------------- */
+/* Стартовое состояние ставит JS (reveal.js) — если JS выключен,
+   контент виден сразу, ничего не ломается. */
+
+.js-reveal-ready [data-reveal] { opacity: 0; }
