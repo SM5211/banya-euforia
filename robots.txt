@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://banya-euforia.ru/sitemap.xml
+Sitemap: https://sm5211.github.io/banya-euforia/sitemap.xml
