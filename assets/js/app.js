@@ -21,6 +21,7 @@
     EUF.initLightbox();
     EUF.initGalleryFilter();
     EUF.initBookingForm();
+    EUF.initAnalytics();
   });
 
   /* --- Шапка: «стекло» после прокрутки ----------------------------------- */
