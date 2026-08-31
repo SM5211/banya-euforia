@@ -309,29 +309,56 @@
   color: var(--c-accent-soft);
 }
 
-.menu-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+.menu-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.1rem; }
 
-/* Строка меню: название — отточие — цена */
+/* Позиция меню: название и цена в строку, под ними состав */
 .menu-list li {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   align-items: baseline;
-  gap: 0.5rem;
+  column-gap: 0.7rem;
+  row-gap: 0.25rem;
   font-size: 0.97rem;
 }
 
 .menu-list__name { color: var(--c-text); }
 
-.menu-list__dots {
-  flex: 1;
-  height: 1px;
-  margin-bottom: 0.25em;
-  border-bottom: 1px dotted rgba(232, 238, 240, 0.25);
+.menu-list__portion {
+  font-size: 0.78rem;
+  color: var(--c-text-dim);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .menu-list__price {
-  color: var(--c-text-muted);
+  color: var(--c-accent-soft);
+  font-weight: 600;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+  min-width: 4.5ch;
+  text-align: right;
+}
+
+.menu-list__desc {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--c-text-muted);
+}
+
+/* Метка популярного блюда */
+.menu-list__hit {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(224, 145, 63, 0.18);
+  color: var(--c-accent-soft);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  vertical-align: 0.15em;
 }
 
 /* --- Форма брони ---------------------------------------------------------- */
