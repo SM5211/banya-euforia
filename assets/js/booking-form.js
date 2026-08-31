@@ -25,7 +25,7 @@
   'use strict';
 
   var INSTAGRAM_DM = 'https://ig.me/m/banya_euforia_';
-  var WHATSAPP_PHONE = '79245323474';
+  var WHATSAPP_PHONE = '79643582525';   // WhatsApp комплекса
 
   EUF.initBookingForm = function () {
     var form = document.querySelector('[data-booking-form]');
@@ -147,11 +147,12 @@
           if (!res.ok) throw new Error('bad status ' + res.status);
           form.reset();
           submitBtn.disabled = false;
+          if (EUF.goal) EUF.goal('booking_sent');
           setStatus('Заявка принята! Перезвоним, чтобы подтвердить время.', 'success');
         }).catch(function (err) {
           console.error(err);
           submitBtn.disabled = false;
-          setStatus('Не получилось отправить. Позвоните нам: +7 924 532-34-74', 'error');
+          setStatus('Не получилось отправить. Позвоните нам: 58-25-25', 'error');
         });
         return;
       }
@@ -160,6 +161,7 @@
          всплывающим и заблокирует */
       var win = window.open(INSTAGRAM_DM, '_blank', 'noopener');
 
+      EUF.goal && EUF.goal('booking_sent');
       copyToClipboard(text).then(function () {
         setStatus('Текст заявки скопирован. Вставьте его в чат Instagram и отправьте — мы ответим и подтвердим время.', 'success');
         if (!win) showCopyBox(text, 'Не получилось открыть Instagram. Откройте чат @banya_euforia_ и вставьте текст:');
@@ -173,6 +175,7 @@
     if (waBtn) {
       waBtn.addEventListener('click', function () {
         if (!isValid()) return;
+        if (EUF.goal) EUF.goal('booking_sent');
         window.open('https://wa.me/' + WHATSAPP_PHONE + '?text=' + encodeURIComponent(buildText()), '_blank', 'noopener');
         setStatus('Открыли WhatsApp — текст заявки уже подставлен, осталось отправить.', 'success');
       });
