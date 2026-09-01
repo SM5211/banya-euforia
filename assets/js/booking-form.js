@@ -120,8 +120,20 @@
         'Время: ' + get('time'),
         'Гостей: ' + get('guests')
       ];
+      /* Предзаказ из кухни — то, что гость отметил галочками */
+      var dishes = Array.prototype.slice.call(form.querySelectorAll('input[name="dish"]:checked'))
+        .map(function (d) { return d.value; });
+      if (dishes.length) {
+        lines.push('');
+        lines.push('Предзаказ из кухни:');
+        dishes.forEach(function (d) { lines.push('• ' + d); });
+      }
+
       var comment = get('comment');
-      if (comment) lines.push('Комментарий: ' + comment);
+      if (comment) {
+        lines.push('');
+        lines.push('Комментарий: ' + comment);
+      }
       return lines.join('\n');
     }
 
@@ -158,29 +170,71 @@
       }
 
       /* ВАЖЕН ПОРЯДОК. Сначала копируем — синхронно, пока страница ещё в фокусе.
-         Если открыть чат первым, браузер уводит фокус на Instagram и запрещает
-         запись в буфер обмена (NotAllowedError) — текст не копировался. */
+         Если сперва открыть чат, браузер уводит фокус на Instagram и запрещает
+         запись в буфер обмена — текст не скопируется. */
       var copied = copySync(text);
-
-      /* Окно открываем тут же, внутри обработчика клика, иначе браузер
-         сочтёт его всплывающим и заблокирует */
-      var win = window.open(INSTAGRAM_DM, '_blank', 'noopener');
+      if (!copied) copyToClipboard(text).catch(function () {});
 
       EUF.goal && EUF.goal('booking_sent');
 
-      if (copied) {
-        setStatus('Текст заявки скопирован. Вставьте его в чат Instagram и отправьте — мы ответим и подтвердим время.', 'success');
-        if (!win) showCopyBox(text, 'Не получилось открыть Instagram. Откройте чат @banya_euforia_ и вставьте текст:');
-      } else {
-        /* запасной путь: показываем текст прямо на странице */
-        showCopyBox(text, 'Скопируйте текст заявки и отправьте его в Instagram:');
-        setStatus('Скопируйте текст ниже и отправьте в чат Instagram.', 'pending');
-        /* и параллельно пробуем современный способ — вдруг сработает */
-        copyToClipboard(text).then(function () {
-          setStatus('Текст заявки скопирован. Вставьте его в чат Instagram и отправьте.', 'success');
-        }).catch(function () {});
-      }
+      /* Чат Instagram открываем не сразу, а по кнопке в плашке: гость должен
+         увидеть, что текст скопирован и его нужно вставить. Клик по кнопке
+         в плашке — тоже жест пользователя, поэтому окно не блокируется. */
+      showCopyModal(text, copied);
+      setStatus(copied
+        ? 'Текст заявки скопирован — вставьте его в чат Instagram.'
+        : 'Скопируйте текст заявки и отправьте его в Instagram.', copied ? 'success' : 'pending');
     });
+
+    /* --- Плашка перед переходом в Instagram ------------------------------- */
+    function showCopyModal(text, copied) {
+      var modal = document.querySelector('[data-copy-modal]');
+      if (!modal) {   /* плашки на странице нет — ведём себя как раньше */
+        window.open(INSTAGRAM_DM, '_blank', 'noopener');
+        return;
+      }
+
+      modal.querySelector('[data-modal-preview]').textContent = text;
+      modal.classList.toggle('is-manual', !copied);
+      modal.querySelector('[data-modal-badge]').textContent = copied
+        ? 'Текст заявки скопирован'
+        : 'Скопируйте текст заявки';
+      modal.querySelector('[data-modal-text]').textContent = copied
+        ? 'Instagram не умеет подставлять текст сам. Откройте чат, задержите палец на поле ввода, выберите «Вставить» — и отправьте сообщение.'
+        : 'Браузер не дал скопировать автоматически. Выделите текст ниже, скопируйте его и вставьте в чат Instagram.';
+
+      modal.hidden = false;
+      document.body.classList.add('is-locked');
+      if (EUF.lenis) EUF.lenis.stop();
+      modal.querySelector('[data-modal-go]').focus();
+
+      /* Esc и клик по фону закрывают плашку */
+      document.addEventListener('keydown', onKey);
+      modal.addEventListener('click', onClick);
+
+      function onKey(e) { if (e.key === 'Escape') close(); }
+      function onClick(e) {
+        if (e.target.closest('[data-modal-close]')) { close(); return; }
+        if (e.target.closest('[data-modal-copy]')) {
+          var ok = copySync(text);
+          var badge = modal.querySelector('[data-modal-badge]');
+          badge.textContent = ok ? 'Текст скопирован ещё раз' : 'Скопируйте текст вручную';
+          modal.classList.toggle('is-manual', !ok);
+          return;
+        }
+        if (e.target.closest('[data-modal-go]')) {
+          /* ссылка откроется сама, плашку просто закрываем */
+          setTimeout(close, 100);
+        }
+      }
+      function close() {
+        modal.hidden = true;
+        document.body.classList.remove('is-locked');
+        if (EUF.lenis) EUF.lenis.start();
+        document.removeEventListener('keydown', onKey);
+        modal.removeEventListener('click', onClick);
+      }
+    }
 
     /* Кнопка WhatsApp: там текст подставляется сам, копировать ничего не надо */
     if (waBtn) {

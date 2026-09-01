@@ -19,13 +19,13 @@
 <meta name="theme-color" content="#120E0B">
 
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/css/fonts.css?v=11">
-<link rel="stylesheet" href="../vendor/lenis.css?v=11">
-<link rel="stylesheet" href="../assets/css/base.css?v=11">
-<link rel="stylesheet" href="../assets/css/layout.css?v=11">
-<link rel="stylesheet" href="../assets/css/components.css?v=11">
-<link rel="stylesheet" href="../assets/css/sections.css?v=11">
-<link rel="stylesheet" href="../assets/css/pages.css?v=11">
+<link rel="stylesheet" href="../assets/css/fonts.css?v=12">
+<link rel="stylesheet" href="../vendor/lenis.css?v=12">
+<link rel="stylesheet" href="../assets/css/base.css?v=12">
+<link rel="stylesheet" href="../assets/css/layout.css?v=12">
+<link rel="stylesheet" href="../assets/css/components.css?v=12">
+<link rel="stylesheet" href="../assets/css/sections.css?v=12">
+<link rel="stylesheet" href="../assets/css/pages.css?v=12">
 
 <!-- Прячем блоки до инициализации анимации, но только если JS включён -->
 <script>document.documentElement.classList.add('js-reveal-ready');</script>
@@ -140,6 +140,66 @@
               <label for="time">Во сколько <span class="req">*</span></label>
               <input type="time" id="time" name="time" required min="09:00" max="23:30" step="1800" value="18:00">
               <span class="field__error"></span>
+            </div>
+
+            <div class="field field--full">
+              <span class="field__legend">Предзаказ из кухни <span class="field__hint">по желанию</span></span>
+              <!-- Блюда-хиты из меню. Чтобы добавить или убрать позицию — скопируйте
+                   любой <label class="dish"> и поменяйте название с ценой в value и внутри span. -->
+              <div class="dishes">
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Крылышки барбекю — 380 ₽">
+                  <span class="dish__body">Крылышки барбекю <b>380 ₽</b></span>
+                </label>
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Салат с груздями и свининой — 400 ₽">
+                  <span class="dish__body">Салат с груздями и свининой <b>400 ₽</b></span>
+                </label>
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Пельмени с белыми грибами — 380 ₽">
+                  <span class="dish__body">Пельмени с белыми грибами <b>380 ₽</b></span>
+                </label>
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Ассорти баварских колбас — 1800 ₽">
+                  <span class="dish__body">Ассорти баварских колбас <b>1800 ₽</b></span>
+                </label>
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Рулька свиная — 160 ₽/100 г">
+                  <span class="dish__body">Рулька свиная <b>160 ₽/100 г</b></span>
+                </label>
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Котлетки с птитимом — 430 ₽">
+                  <span class="dish__body">Котлетки с птитимом <b>430 ₽</b></span>
+                </label>
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Сырные палочки — 350 ₽">
+                  <span class="dish__body">Сырные палочки <b>350 ₽</b></span>
+                </label>
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Сырное ассорти — 400 ₽">
+                  <span class="dish__body">Сырное ассорти <b>400 ₽</b></span>
+                </label>
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Сагудай из омуля — 420 ₽">
+                  <span class="dish__body">Сагудай из омуля <b>420 ₽</b></span>
+                </label>
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Цезарь с курицей — 370 ₽">
+                  <span class="dish__body">Цезарь с курицей <b>370 ₽</b></span>
+                </label>
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Чай «Таёжный» — 350 ₽">
+                  <span class="dish__body">Чай «Таёжный» <b>350 ₽</b></span>
+                </label>
+                <label class="dish">
+                  <input type="checkbox" name="dish" value="Морс, 1 л — 300 ₽">
+                  <span class="dish__body">Морс, 1 л <b>300 ₽</b></span>
+                </label>
+              </div>
+              <p class="dishes__note">
+                Отметьте, что подать к приезду — блюда попадут в заявку. Количество уточним
+                при подтверждении. <a href="../menu/">Всё меню кафе</a>
+              </p>
             </div>
 
             <div class="field field--full">
@@ -321,6 +381,27 @@
   </div>
 </footer>
 
+
+<!-- Плашка появляется только при отправке в Instagram: он не умеет подставлять
+     текст в сообщение, поэтому заявку нужно вставить вручную -->
+<div class="modal" data-copy-modal hidden>
+  <div class="modal__backdrop" data-modal-close></div>
+  <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="copy-modal-title">
+    <button class="modal__close" type="button" data-modal-close aria-label="Закрыть">✕</button>
+    <p class="modal__badge" data-modal-badge>Текст заявки скопирован</p>
+    <h3 class="modal__title" id="copy-modal-title">Осталось вставить его в чат</h3>
+    <p class="modal__text" data-modal-text>
+      Instagram не умеет подставлять текст сам. Откройте чат, задержите палец на поле
+      ввода, выберите «Вставить» — и отправьте сообщение.
+    </p>
+    <pre class="modal__preview" data-modal-preview></pre>
+    <div class="modal__actions">
+      <a class="btn btn--primary btn--block" data-modal-go href="https://ig.me/m/banya_euforia_" target="_blank" rel="noopener">Открыть Instagram</a>
+      <button class="btn btn--ghost btn--block" type="button" data-modal-copy>Скопировать ещё раз</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== ПЛАВАЮЩАЯ КНОПКА СВЯЗИ ===================== -->
 <div class="fab" data-fab>
   <button class="fab__toggle" type="button" data-fab-toggle aria-expanded="false" aria-controls="fab-list" aria-label="Связаться с нами">
@@ -356,19 +437,19 @@
   </ul>
 </div>
 
-<script src="../vendor/gsap.min.js?v=11" defer></script>
-<script src="../vendor/ScrollTrigger.min.js?v=11" defer></script>
-<script src="../vendor/lenis.min.js?v=11" defer></script>
-<script src="../assets/js/motion.js?v=11" defer></script>
-<script src="../assets/js/lenis-init.js?v=11" defer></script>
-<script src="../assets/js/reveal.js?v=11" defer></script>
-<script src="../assets/js/fx/ripple.js?v=11" defer></script>
-<script src="../assets/js/fx/steam.js?v=11" defer></script>
-<script src="../assets/js/fx/embers.js?v=11" defer></script>
-<script src="../assets/js/hero-video.js?v=11" defer></script>
-<script src="../assets/js/lightbox.js?v=11" defer></script>
-<script src="../assets/js/booking-form.js?v=11" defer></script>
-<script src="../assets/js/analytics.js?v=11" defer></script>
-<script src="../assets/js/app.js?v=11" defer></script>
+<script src="../vendor/gsap.min.js?v=12" defer></script>
+<script src="../vendor/ScrollTrigger.min.js?v=12" defer></script>
+<script src="../vendor/lenis.min.js?v=12" defer></script>
+<script src="../assets/js/motion.js?v=12" defer></script>
+<script src="../assets/js/lenis-init.js?v=12" defer></script>
+<script src="../assets/js/reveal.js?v=12" defer></script>
+<script src="../assets/js/fx/ripple.js?v=12" defer></script>
+<script src="../assets/js/fx/steam.js?v=12" defer></script>
+<script src="../assets/js/fx/embers.js?v=12" defer></script>
+<script src="../assets/js/hero-video.js?v=12" defer></script>
+<script src="../assets/js/lightbox.js?v=12" defer></script>
+<script src="../assets/js/booking-form.js?v=12" defer></script>
+<script src="../assets/js/analytics.js?v=12" defer></script>
+<script src="../assets/js/app.js?v=12" defer></script>
 </body>
 </html>
