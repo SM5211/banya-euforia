@@ -19,13 +19,13 @@
 <meta name="theme-color" content="#120E0B">
 
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/css/fonts.css?v=10">
-<link rel="stylesheet" href="../vendor/lenis.css?v=10">
-<link rel="stylesheet" href="../assets/css/base.css?v=10">
-<link rel="stylesheet" href="../assets/css/layout.css?v=10">
-<link rel="stylesheet" href="../assets/css/components.css?v=10">
-<link rel="stylesheet" href="../assets/css/sections.css?v=10">
-<link rel="stylesheet" href="../assets/css/pages.css?v=10">
+<link rel="stylesheet" href="../assets/css/fonts.css?v=21">
+<link rel="stylesheet" href="../vendor/lenis.css?v=21">
+<link rel="stylesheet" href="../assets/css/base.css?v=21">
+<link rel="stylesheet" href="../assets/css/layout.css?v=21">
+<link rel="stylesheet" href="../assets/css/components.css?v=21">
+<link rel="stylesheet" href="../assets/css/sections.css?v=21">
+<link rel="stylesheet" href="../assets/css/pages.css?v=21">
 
 <!-- Прячем блоки до инициализации анимации, но только если JS включён -->
 <script>document.documentElement.classList.add('js-reveal-ready');</script>
@@ -65,7 +65,7 @@
 </header>
 
 <!-- ===================== МОБИЛЬНОЕ МЕНЮ ===================== -->
-<div class="mobile-menu" id="mobile-menu" data-mobile-menu aria-hidden="true">
+<div class="mobile-menu" id="mobile-menu" data-mobile-menu data-lenis-prevent aria-hidden="true">
   <nav class="mobile-menu__nav" aria-label="Мобильная навигация">
     <a class="mobile-menu__link" href="../index.html">Главная</a>
     <a class="mobile-menu__link" href="../services/">Услуги и цены</a>
@@ -140,6 +140,561 @@
               <label for="time">Во сколько <span class="req">*</span></label>
               <input type="time" id="time" name="time" required min="09:00" max="23:30" step="1800" value="18:00">
               <span class="field__error"></span>
+            </div>
+
+            <div class="field field--full">
+              <span class="field__legend">Предзаказ из кухни <span class="field__hint">по желанию</span></span>
+
+              <button class="preorder-open" type="button" data-preorder-open>
+                <span class="preorder-open__text">
+                  <b>Выбрать блюда из меню</b>
+                  <small data-preorder-brief>Закуски, горячее, напитки — 50 позиций</small>
+                </span>
+                <span class="preorder-open__arrow" aria-hidden="true">→</span>
+              </button>
+
+              <p class="preorder__total" data-preorder-summary hidden>
+                Выбрано <b data-preorder-count>0</b> · на сумму <b data-preorder-total>0 ₽</b>
+                <button class="preorder__edit" type="button" data-preorder-open>изменить</button>
+              </p>
+
+            <!-- Плашка со всем меню: открывается кнопкой выше, выбор попадает в заявку -->
+            <div class="menu-modal" data-menu-modal hidden>
+              <div class="menu-modal__backdrop" data-menu-close></div>
+              <div class="menu-modal__card" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Меню кафе">
+                <header class="menu-modal__head">
+                  <div>
+                    <p class="menu-modal__eyebrow">Меню кафе</p>
+                    <h3 class="menu-modal__title">Что подать к приезду</h3>
+                  </div>
+                  <button class="menu-modal__close" type="button" data-menu-close aria-label="Закрыть">✕</button>
+                </header>
+
+                <nav class="menu-modal__tabs" aria-label="Разделы меню" data-lenis-prevent>
+        <button class="menu-modal__tab" type="button" data-jump="mm-zakuski">Закуски</button>
+        <button class="menu-modal__tab" type="button" data-jump="mm-salaty">Салаты</button>
+        <button class="menu-modal__tab" type="button" data-jump="mm-supy">Супы</button>
+        <button class="menu-modal__tab" type="button" data-jump="mm-goryachee">Горячее</button>
+        <button class="menu-modal__tab" type="button" data-jump="mm-fritur">Фритюр</button>
+        <button class="menu-modal__tab" type="button" data-jump="mm-chay-avt">Авторский чай</button>
+        <button class="menu-modal__tab" type="button" data-jump="mm-chay">Классический чай</button>
+        <button class="menu-modal__tab" type="button" data-jump="mm-kokteyli">Коктейли и лимонады</button>
+        <button class="menu-modal__tab" type="button" data-jump="mm-napitki">Напитки</button>
+        <button class="menu-modal__tab" type="button" data-jump="mm-pivo">Пиво</button>
+                </nav>
+
+                <div class="menu-modal__body" data-menu-scroll data-lenis-prevent>
+        <section class="menu-modal__group" id="mm-zakuski">
+          <h4 class="menu-modal__group-title">Закуски</h4>
+          <div class="preorder">
+          <div class="preorder__item" data-dish data-name="Сырное ассорти" data-portion="180 г" data-price="400">
+            <span class="preorder__name">Сырное ассорти <span class="preorder__portion">180 г</span></span>
+            <span class="preorder__price">400 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Сырное ассорти">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Сырное ассорти">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Сырное ассорти">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Сагудай из омуля" data-portion="150 г" data-price="420">
+            <span class="preorder__name">Сагудай из омуля <span class="preorder__portion">150 г</span></span>
+            <span class="preorder__price">420 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Сагудай из омуля">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Сагудай из омуля">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Сагудай из омуля">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Крылышки куриные барбекю" data-portion="250 г" data-price="380">
+            <span class="preorder__name">Крылышки куриные барбекю <span class="preorder__hit">хит</span> <span class="preorder__portion">250 г</span></span>
+            <span class="preorder__price">380 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Крылышки куриные барбекю">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Крылышки куриные барбекю">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Крылышки куриные барбекю">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Креветки на пару в панцире" data-portion="200 г" data-price="600">
+            <span class="preorder__name">Креветки на пару в панцире <span class="preorder__portion">200 г</span></span>
+            <span class="preorder__price">600 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Креветки на пару в панцире">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Креветки на пару в панцире">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Креветки на пару в панцире">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Хрустящие баклажаны" data-portion="120/30 г" data-price="350">
+            <span class="preorder__name">Хрустящие баклажаны <span class="preorder__portion">120/30 г</span></span>
+            <span class="preorder__price">350 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Хрустящие баклажаны">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Хрустящие баклажаны">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Хрустящие баклажаны">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Грузди со сметаной и чипсами" data-portion="150 г" data-price="400">
+            <span class="preorder__name">Грузди со сметаной и чипсами <span class="preorder__portion">150 г</span></span>
+            <span class="preorder__price">400 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Грузди со сметаной и чипсами">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Грузди со сметаной и чипсами">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Грузди со сметаной и чипсами">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Драники картофельные со сметаной" data-portion="2 шт" data-price="360">
+            <span class="preorder__name">Драники картофельные со сметаной <span class="preorder__portion">2 шт</span></span>
+            <span class="preorder__price">360 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Драники картофельные со сметаной">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Драники картофельные со сметаной">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Драники картофельные со сметаной">+</button>
+            </div>
+          </div>
+          </div>
+        </section>
+        <section class="menu-modal__group" id="mm-salaty">
+          <h4 class="menu-modal__group-title">Салаты</h4>
+          <div class="preorder">
+          <div class="preorder__item" data-dish data-name="С груздями и свининой" data-portion="250 г" data-price="400">
+            <span class="preorder__name">С груздями и свининой <span class="preorder__hit">хит</span> <span class="preorder__portion">250 г</span></span>
+            <span class="preorder__price">400 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: С груздями и свининой">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: С груздями и свининой">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: С груздями и свининой">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Цезарь с курицей" data-portion="250 г" data-price="370">
+            <span class="preorder__name">Цезарь с курицей <span class="preorder__portion">250 г</span></span>
+            <span class="preorder__price">370 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Цезарь с курицей">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Цезарь с курицей">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Цезарь с курицей">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="С киноа, запечённой свёклой и фетой" data-portion="250 г" data-price="370">
+            <span class="preorder__name">С киноа, запечённой свёклой и фетой <span class="preorder__portion">250 г</span></span>
+            <span class="preorder__price">370 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: С киноа, запечённой свёклой и фетой">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: С киноа, запечённой свёклой и фетой">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: С киноа, запечённой свёклой и фетой">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Из свежих овощей" data-portion="250 г" data-price="320">
+            <span class="preorder__name">Из свежих овощей <span class="preorder__portion">250 г</span></span>
+            <span class="preorder__price">320 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Из свежих овощей">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Из свежих овощей">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Из свежих овощей">+</button>
+            </div>
+          </div>
+          </div>
+        </section>
+        <section class="menu-modal__group" id="mm-supy">
+          <h4 class="menu-modal__group-title">Супы</h4>
+          <div class="preorder">
+          <div class="preorder__item" data-dish data-name="Домашние пельмени с белыми грибами и сметаной" data-portion="350 г" data-price="380">
+            <span class="preorder__name">Домашние пельмени с белыми грибами и сметаной <span class="preorder__hit">хит</span> <span class="preorder__portion">350 г</span></span>
+            <span class="preorder__price">380 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Домашние пельмени с белыми грибами и сметаной">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Домашние пельмени с белыми грибами и сметаной">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Домашние пельмени с белыми грибами и сметаной">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Куриный с птитимом" data-portion="350 г" data-price="300">
+            <span class="preorder__name">Куриный с птитимом <span class="preorder__portion">350 г</span></span>
+            <span class="preorder__price">300 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Куриный с птитимом">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Куриный с птитимом">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Куриный с птитимом">+</button>
+            </div>
+          </div>
+          </div>
+        </section>
+        <section class="menu-modal__group" id="mm-goryachee">
+          <h4 class="menu-modal__group-title">Горячее</h4>
+          <div class="preorder">
+          <div class="preorder__item" data-dish data-name="Ассорти баварских колбас" data-portion="500/350/100 г" data-price="1800">
+            <span class="preorder__name">Ассорти баварских колбас <span class="preorder__hit">хит</span> <span class="preorder__portion">500/350/100 г</span></span>
+            <span class="preorder__price">1800 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Ассорти баварских колбас">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Ассорти баварских колбас">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Ассорти баварских колбас">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Рулька свиная" data-portion="за 100 г" data-price="160">
+            <span class="preorder__name">Рулька свиная <span class="preorder__hit">хит</span> <span class="preorder__portion">за 100 г</span></span>
+            <span class="preorder__price">160 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Рулька свиная">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Рулька свиная">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Рулька свиная">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Куриные котлетки с птитимом и шпинатным соусом" data-portion="370 г" data-price="430">
+            <span class="preorder__name">Куриные котлетки с птитимом и шпинатным соусом <span class="preorder__hit">хит</span> <span class="preorder__portion">370 г</span></span>
+            <span class="preorder__price">430 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Куриные котлетки с птитимом и шпинатным соусом">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Куриные котлетки с птитимом и шпинатным соусом">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Куриные котлетки с птитимом и шпинатным соусом">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Вок лапша с креветками" data-portion="350 г" data-price="440">
+            <span class="preorder__name">Вок лапша с креветками <span class="preorder__portion">350 г</span></span>
+            <span class="preorder__price">440 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Вок лапша с креветками">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Вок лапша с креветками">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Вок лапша с креветками">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Вок лапша с курицей" data-portion="350 г" data-price="380">
+            <span class="preorder__name">Вок лапша с курицей <span class="preorder__portion">350 г</span></span>
+            <span class="preorder__price">380 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Вок лапша с курицей">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Вок лапша с курицей">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Вок лапша с курицей">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Картофель по-деревенски в сметане" data-portion="350 г" data-price="400">
+            <span class="preorder__name">Картофель по-деревенски в сметане <span class="preorder__portion">350 г</span></span>
+            <span class="preorder__price">400 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Картофель по-деревенски в сметане">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Картофель по-деревенски в сметане">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Картофель по-деревенски в сметане">+</button>
+            </div>
+          </div>
+          </div>
+        </section>
+        <section class="menu-modal__group" id="mm-fritur">
+          <h4 class="menu-modal__group-title">Фритюр</h4>
+          <div class="preorder">
+          <div class="preorder__item" data-dish data-name="Сырные палочки" data-portion="6 шт" data-price="350">
+            <span class="preorder__name">Сырные палочки <span class="preorder__hit">хит</span> <span class="preorder__portion">6 шт</span></span>
+            <span class="preorder__price">350 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Сырные палочки">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Сырные палочки">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Сырные палочки">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Наггетсы с сырным соусом" data-portion="7 шт" data-price="350">
+            <span class="preorder__name">Наггетсы с сырным соусом <span class="preorder__portion">7 шт</span></span>
+            <span class="preorder__price">350 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Наггетсы с сырным соусом">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Наггетсы с сырным соусом">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Наггетсы с сырным соусом">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Креветки тигровые в панировке" data-portion="5 шт / 30 г" data-price="470">
+            <span class="preorder__name">Креветки тигровые в панировке <span class="preorder__portion">5 шт / 30 г</span></span>
+            <span class="preorder__price">470 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Креветки тигровые в панировке">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Креветки тигровые в панировке">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Креветки тигровые в панировке">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Луковые кольца" data-portion="130/30 г" data-price="270">
+            <span class="preorder__name">Луковые кольца <span class="preorder__portion">130/30 г</span></span>
+            <span class="preorder__price">270 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Луковые кольца">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Луковые кольца">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Луковые кольца">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Картофель фри" data-portion="150/30 г" data-price="270">
+            <span class="preorder__name">Картофель фри <span class="preorder__portion">150/30 г</span></span>
+            <span class="preorder__price">270 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Картофель фри">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Картофель фри">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Картофель фри">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Айдахо" data-portion="150/30 г" data-price="270">
+            <span class="preorder__name">Айдахо <span class="preorder__portion">150/30 г</span></span>
+            <span class="preorder__price">270 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Айдахо">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Айдахо">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Айдахо">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Гарлики чесночные с соусом тар-тар" data-portion="100/30 г" data-price="250">
+            <span class="preorder__name">Гарлики чесночные с соусом тар-тар <span class="preorder__portion">100/30 г</span></span>
+            <span class="preorder__price">250 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Гарлики чесночные с соусом тар-тар">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Гарлики чесночные с соусом тар-тар">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Гарлики чесночные с соусом тар-тар">+</button>
+            </div>
+          </div>
+          </div>
+        </section>
+        <section class="menu-modal__group" id="mm-chay-avt">
+          <h4 class="menu-modal__group-title">Авторский чай</h4>
+          <div class="preorder">
+          <div class="preorder__item" data-dish data-name="Таёжный" data-portion="700 мл" data-price="350">
+            <span class="preorder__name">Таёжный <span class="preorder__hit">хит</span> <span class="preorder__portion">700 мл</span></span>
+            <span class="preorder__price">350 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Таёжный">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Таёжный">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Таёжный">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Манго-маракуйя" data-portion="700 мл" data-price="350">
+            <span class="preorder__name">Манго-маракуйя <span class="preorder__portion">700 мл</span></span>
+            <span class="preorder__price">350 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Манго-маракуйя">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Манго-маракуйя">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Манго-маракуйя">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Облепиховый с мятой" data-portion="700 мл" data-price="350">
+            <span class="preorder__name">Облепиховый с мятой <span class="preorder__portion">700 мл</span></span>
+            <span class="preorder__price">350 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Облепиховый с мятой">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Облепиховый с мятой">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Облепиховый с мятой">+</button>
+            </div>
+          </div>
+          </div>
+        </section>
+        <section class="menu-modal__group" id="mm-chay">
+          <h4 class="menu-modal__group-title">Классический чай</h4>
+          <div class="preorder">
+          <div class="preorder__item" data-dish data-name="Сенча" data-portion="700 мл" data-price="250">
+            <span class="preorder__name">Сенча <span class="preorder__portion">700 мл</span></span>
+            <span class="preorder__price">250 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Сенча">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Сенча">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Сенча">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Эрл грей" data-portion="700 мл" data-price="250">
+            <span class="preorder__name">Эрл грей <span class="preorder__portion">700 мл</span></span>
+            <span class="preorder__price">250 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Эрл грей">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Эрл грей">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Эрл грей">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Молочный улун" data-portion="700 мл" data-price="250">
+            <span class="preorder__name">Молочный улун <span class="preorder__portion">700 мл</span></span>
+            <span class="preorder__price">250 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Молочный улун">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Молочный улун">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Молочный улун">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Ассам" data-portion="700 мл" data-price="250">
+            <span class="preorder__name">Ассам <span class="preorder__portion">700 мл</span></span>
+            <span class="preorder__price">250 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Ассам">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Ассам">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Ассам">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Травяной сбор" data-portion="700 мл" data-price="250">
+            <span class="preorder__name">Травяной сбор <span class="preorder__portion">700 мл</span></span>
+            <span class="preorder__price">250 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Травяной сбор">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Травяной сбор">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Травяной сбор">+</button>
+            </div>
+          </div>
+          </div>
+        </section>
+        <section class="menu-modal__group" id="mm-kokteyli">
+          <h4 class="menu-modal__group-title">Коктейли и лимонады</h4>
+          <div class="preorder">
+          <div class="preorder__item" data-dish data-name="Молочный коктейль классический" data-portion="300 мл" data-price="350">
+            <span class="preorder__name">Молочный коктейль классический <span class="preorder__portion">300 мл</span></span>
+            <span class="preorder__price">350 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Молочный коктейль классический">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Молочный коктейль классический">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Молочный коктейль классический">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Молочный коктейль клубничный" data-portion="300 мл" data-price="350">
+            <span class="preorder__name">Молочный коктейль клубничный <span class="preorder__portion">300 мл</span></span>
+            <span class="preorder__price">350 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Молочный коктейль клубничный">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Молочный коктейль клубничный">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Молочный коктейль клубничный">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Молочный коктейль шоколадный" data-portion="300 мл" data-price="350">
+            <span class="preorder__name">Молочный коктейль шоколадный <span class="preorder__portion">300 мл</span></span>
+            <span class="preorder__price">350 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Молочный коктейль шоколадный">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Молочный коктейль шоколадный">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Молочный коктейль шоколадный">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Лимонад яблоко-киви-имбирь" data-portion="400 мл" data-price="250">
+            <span class="preorder__name">Лимонад яблоко-киви-имбирь <span class="preorder__portion">400 мл</span></span>
+            <span class="preorder__price">250 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Лимонад яблоко-киви-имбирь">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Лимонад яблоко-киви-имбирь">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Лимонад яблоко-киви-имбирь">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Лимонад манго-маракуйя" data-portion="400 мл" data-price="250">
+            <span class="preorder__name">Лимонад манго-маракуйя <span class="preorder__portion">400 мл</span></span>
+            <span class="preorder__price">250 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Лимонад манго-маракуйя">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Лимонад манго-маракуйя">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Лимонад манго-маракуйя">+</button>
+            </div>
+          </div>
+          </div>
+        </section>
+        <section class="menu-modal__group" id="mm-napitki">
+          <h4 class="menu-modal__group-title">Напитки</h4>
+          <div class="preorder">
+          <div class="preorder__item" data-dish data-name="«Эйфория»" data-portion="500 мл" data-price="250">
+            <span class="preorder__name">«Эйфория» <span class="preorder__hit">хит</span> <span class="preorder__portion">500 мл</span></span>
+            <span class="preorder__price">250 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: «Эйфория»">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: «Эйфория»">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: «Эйфория»">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Морс" data-portion="1 л" data-price="300">
+            <span class="preorder__name">Морс <span class="preorder__portion">1 л</span></span>
+            <span class="preorder__price">300 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Морс">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Морс">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Морс">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Сок в ассортименте" data-portion="1 л" data-price="350">
+            <span class="preorder__name">Сок в ассортименте <span class="preorder__portion">1 л</span></span>
+            <span class="preorder__price">350 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Сок в ассортименте">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Сок в ассортименте">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Сок в ассортименте">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Кола" data-portion="500 мл" data-price="180">
+            <span class="preorder__name">Кола <span class="preorder__portion">500 мл</span></span>
+            <span class="preorder__price">180 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Кола">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Кола">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Кола">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Нарзан" data-portion="500 мл" data-price="180">
+            <span class="preorder__name">Нарзан <span class="preorder__portion">500 мл</span></span>
+            <span class="preorder__price">180 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Нарзан">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Нарзан">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Нарзан">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Вода" data-portion="500 мл" data-price="140">
+            <span class="preorder__name">Вода <span class="preorder__portion">500 мл</span></span>
+            <span class="preorder__price">140 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Вода">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Вода">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Вода">+</button>
+            </div>
+          </div>
+          </div>
+        </section>
+        <section class="menu-modal__group" id="mm-pivo">
+          <h4 class="menu-modal__group-title">Пиво</h4>
+          <div class="preorder">
+          <div class="preorder__item" data-dish data-name="El Acapulco светлое" data-portion="450 мл" data-price="270">
+            <span class="preorder__name">El Acapulco светлое <span class="preorder__portion">450 мл</span></span>
+            <span class="preorder__price">270 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: El Acapulco светлое">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: El Acapulco светлое">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: El Acapulco светлое">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Stella Artois светлое" data-portion="450 мл" data-price="270">
+            <span class="preorder__name">Stella Artois светлое <span class="preorder__portion">450 мл</span></span>
+            <span class="preorder__price">270 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Stella Artois светлое">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Stella Artois светлое">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Stella Artois светлое">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Stella Artois безалкогольное" data-portion="450 мл" data-price="250">
+            <span class="preorder__name">Stella Artois безалкогольное <span class="preorder__portion">450 мл</span></span>
+            <span class="preorder__price">250 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Stella Artois безалкогольное">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Stella Artois безалкогольное">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Stella Artois безалкогольное">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Hoegaarden нефильтрованное" data-portion="450 мл" data-price="270">
+            <span class="preorder__name">Hoegaarden нефильтрованное <span class="preorder__portion">450 мл</span></span>
+            <span class="preorder__price">270 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Hoegaarden нефильтрованное">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Hoegaarden нефильтрованное">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Hoegaarden нефильтрованное">+</button>
+            </div>
+          </div>
+          <div class="preorder__item" data-dish data-name="Kozel тёмное" data-portion="450 мл" data-price="270">
+            <span class="preorder__name">Kozel тёмное <span class="preorder__portion">450 мл</span></span>
+            <span class="preorder__price">270 ₽</span>
+            <div class="stepper">
+              <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Kozel тёмное">−</button>
+              <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Kozel тёмное">
+              <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Kozel тёмное">+</button>
+            </div>
+          </div>
+          </div>
+        </section>
+                  <p class="menu-modal__note">
+                    Цены актуальны на август 2026. Точную сумму подтвердим при бронировании.
+                  </p>
+                </div>
+
+                <footer class="menu-modal__foot">
+                  <p class="menu-modal__sum" data-menu-sum>Ничего не выбрано</p>
+                  <button class="btn btn--primary" type="button" data-menu-done>Готово</button>
+                </footer>
+              </div>
+            </div>
             </div>
 
             <div class="field field--full">
@@ -321,6 +876,27 @@
   </div>
 </footer>
 
+
+<!-- Плашка появляется только при отправке в Instagram: он не умеет подставлять
+     текст в сообщение, поэтому заявку нужно вставить вручную -->
+<div class="modal" data-copy-modal hidden>
+  <div class="modal__backdrop" data-modal-close></div>
+  <div class="modal__card" data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby="copy-modal-title">
+    <button class="modal__close" type="button" data-modal-close aria-label="Закрыть">✕</button>
+    <p class="modal__badge" data-modal-badge>Текст заявки скопирован</p>
+    <h3 class="modal__title" id="copy-modal-title">Осталось вставить его в чат</h3>
+    <p class="modal__text" data-modal-text>
+      Instagram не умеет подставлять текст сам. Откройте чат, задержите палец на поле
+      ввода, выберите «Вставить» — и отправьте сообщение.
+    </p>
+    <pre class="modal__preview" data-modal-preview data-lenis-prevent></pre>
+    <div class="modal__actions">
+      <a class="btn btn--primary btn--block" data-modal-go href="https://ig.me/m/banya_euforia_" target="_blank" rel="noopener">Открыть Instagram</a>
+      <button class="btn btn--ghost btn--block" type="button" data-modal-copy>Скопировать ещё раз</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== ПЛАВАЮЩАЯ КНОПКА СВЯЗИ ===================== -->
 <div class="fab" data-fab>
   <button class="fab__toggle" type="button" data-fab-toggle aria-expanded="false" aria-controls="fab-list" aria-label="Связаться с нами">
@@ -356,19 +932,19 @@
   </ul>
 </div>
 
-<script src="../vendor/gsap.min.js?v=10" defer></script>
-<script src="../vendor/ScrollTrigger.min.js?v=10" defer></script>
-<script src="../vendor/lenis.min.js?v=10" defer></script>
-<script src="../assets/js/motion.js?v=10" defer></script>
-<script src="../assets/js/lenis-init.js?v=10" defer></script>
-<script src="../assets/js/reveal.js?v=10" defer></script>
-<script src="../assets/js/fx/ripple.js?v=10" defer></script>
-<script src="../assets/js/fx/steam.js?v=10" defer></script>
-<script src="../assets/js/fx/embers.js?v=10" defer></script>
-<script src="../assets/js/hero-video.js?v=10" defer></script>
-<script src="../assets/js/lightbox.js?v=10" defer></script>
-<script src="../assets/js/booking-form.js?v=10" defer></script>
-<script src="../assets/js/analytics.js?v=10" defer></script>
-<script src="../assets/js/app.js?v=10" defer></script>
+<script src="../vendor/gsap.min.js?v=21" defer></script>
+<script src="../vendor/ScrollTrigger.min.js?v=21" defer></script>
+<script src="../vendor/lenis.min.js?v=21" defer></script>
+<script src="../assets/js/motion.js?v=21" defer></script>
+<script src="../assets/js/lenis-init.js?v=21" defer></script>
+<script src="../assets/js/reveal.js?v=21" defer></script>
+<script src="../assets/js/fx/ripple.js?v=21" defer></script>
+<script src="../assets/js/fx/steam.js?v=21" defer></script>
+<script src="../assets/js/fx/embers.js?v=21" defer></script>
+<script src="../assets/js/hero-video.js?v=21" defer></script>
+<script src="../assets/js/lightbox.js?v=21" defer></script>
+<script src="../assets/js/booking-form.js?v=21" defer></script>
+<script src="../assets/js/analytics.js?v=21" defer></script>
+<script src="../assets/js/app.js?v=21" defer></script>
 </body>
 </html>

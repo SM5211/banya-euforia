@@ -424,6 +424,406 @@
 
 .form__policy { font-size: 0.8rem; color: var(--c-text-dim); }
 
+/* --- Предзаказ блюд в форме ----------------------------------------------- */
+
+.field__legend {
+  font-size: 0.85rem;
+  color: var(--c-text-muted);
+  display: block;
+  margin-bottom: 0.7rem;
+}
+
+.field__hint { color: var(--c-text-dim); font-size: 0.85em; }
+
+.preorder {
+  display: grid;
+  gap: 0;
+}
+
+/* Строка блюда: название с порцией, цена, счётчик.
+   Без рамок и внутренней прокрутки — список просто идёт по форме. */
+.preorder__item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 0.4rem 0.9rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 10px;
+  transition: background var(--t-fast) var(--ease-out);
+}
+
+.preorder__item + .preorder__item { box-shadow: inset 0 1px 0 var(--c-line); }
+.preorder__item.is-picked { background: rgba(224, 145, 63, 0.1); }
+.preorder__item.is-picked + .preorder__item,
+.preorder__item.is-picked { box-shadow: none; }
+
+.preorder__name { font-size: 0.94rem; line-height: 1.35; }
+
+.preorder__portion {
+  color: var(--c-text-dim);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.preorder__price {
+  color: var(--c-text-muted);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.preorder__item.is-picked .preorder__price { color: var(--c-accent-soft); }
+
+/* Счётчик порций: просто − 0 +, без обводок */
+.stepper { display: flex; align-items: center; gap: 0.1rem; }
+
+.stepper__btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--c-text-dim);
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out);
+}
+.stepper__btn:hover { color: var(--c-accent-soft); background: rgba(224, 145, 63, 0.14); }
+.stepper__btn:disabled { opacity: 0.3; cursor: default; }
+.stepper__btn:disabled:hover { color: var(--c-text-dim); background: none; }
+
+/* Селектор с .field нужен, чтобы перебить общее оформление полей формы,
+   иначе счётчик получает рамку и отступы как у обычного input */
+.field .stepper__value,
+.stepper__value {
+  width: 34px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--c-text-dim);
+  text-align: center;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.field .stepper__value:focus { border: none; background: none; }
+.stepper__value::-webkit-outer-spin-button,
+.stepper__value::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.stepper__value:focus { outline: none; }
+.preorder__item.is-picked .stepper__value { color: var(--c-accent-soft); font-weight: 600; }
+
+
+.preorder__total {
+  margin: 0.9rem 0 0;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-sm);
+  background: rgba(224, 145, 63, 0.12);
+  border: 1px solid rgba(224, 145, 63, 0.3);
+  font-size: 0.92rem;
+  color: var(--c-text-muted);
+}
+.preorder__total b { color: var(--c-accent-soft); font-variant-numeric: tabular-nums; }
+.preorder__total[hidden] { display: none; }
+
+.dishes__note {
+  margin: 0.9rem 0 0;
+  font-size: 0.85rem;
+  color: var(--c-text-dim);
+}
+.dishes__note a { color: var(--c-accent-soft); }
+
+@media (max-width: 520px) {
+  /* на узком экране цена уходит под название, счётчик остаётся справа */
+  .preorder__item { grid-template-columns: 1fr auto; }
+  .preorder__price { grid-row: 2; grid-column: 1; }
+}
+
+
+/* Кнопка, открывающая меню на весь экран */
+.preorder-open {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border-radius: var(--radius-sm);
+  border: 1px dashed rgba(224, 145, 63, 0.45);
+  background: rgba(224, 145, 63, 0.07);
+  color: var(--c-text);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  transition: border-color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out);
+}
+.preorder-open:hover {
+  border-color: var(--c-accent);
+  background: rgba(224, 145, 63, 0.13);
+}
+
+.preorder-open__text { flex: 1; display: grid; gap: 0.2rem; }
+.preorder-open__text b { font-weight: 600; }
+.preorder-open__text small { color: var(--c-text-dim); font-size: 0.84rem; }
+.preorder-open__arrow { color: var(--c-accent-soft); font-size: 1.1rem; }
+
+.preorder__edit {
+  margin-left: 0.6rem;
+  border: none;
+  background: none;
+  color: var(--c-accent-soft);
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+  border-bottom: 1px dashed rgba(242, 183, 92, 0.5);
+  padding: 0;
+}
+.preorder__edit:hover { color: var(--c-text); border-bottom-color: var(--c-text); }
+
+/* --- Меню на весь экран --------------------------------------------------- */
+
+.menu-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 160;
+  display: grid;
+  place-items: center;
+  padding: clamp(0rem, 3vw, 2rem);
+}
+.menu-modal[hidden] { display: none; }
+
+.menu-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 8, 6, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: modal-fade var(--t-med) var(--ease-out);
+}
+
+.menu-modal__card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  width: min(760px, 100%);
+  height: min(88vh, 900px);
+  border-radius: var(--radius);
+  border: 1px solid rgba(224, 145, 63, 0.3);
+  background: var(--c-bg-2);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  animation: modal-rise var(--t-med) var(--ease-out);
+}
+
+.menu-modal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1.1rem, 3vw, 1.6rem) clamp(1.1rem, 3vw, 1.8rem) 0.9rem;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.menu-modal__eyebrow {
+  margin: 0 0 0.2rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+.menu-modal__title { margin: 0; font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.7rem); }
+
+.menu-modal__close {
+  flex: none;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--c-line);
+  background: transparent;
+  color: var(--c-text-muted);
+  cursor: pointer;
+}
+.menu-modal__close:hover { border-color: var(--c-accent); color: var(--c-text); }
+
+/* Быстрые переходы по разделам */
+.menu-modal__tabs {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.8rem clamp(1.1rem, 3vw, 1.8rem);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--c-line);
+  scrollbar-width: thin;
+}
+
+.menu-modal__tab {
+  flex: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--c-line);
+  background: transparent;
+  color: var(--c-text-muted);
+  font: inherit;
+  font-size: 0.86rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out);
+}
+.menu-modal__tab:hover,
+.menu-modal__tab.is-active { border-color: var(--c-accent); color: var(--c-text); }
+
+.menu-modal__body {
+  overflow-y: auto;
+  padding: 0.4rem clamp(0.8rem, 2.5vw, 1.4rem) 1.2rem;
+}
+
+.menu-modal__group { padding-top: 1.2rem; }
+.menu-modal__group-title {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0 0 0.4rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 1.05rem;
+  color: var(--c-accent-soft);
+  background: linear-gradient(var(--c-bg-2) 70%, transparent);
+}
+
+.menu-modal__note {
+  margin: 1.6rem 0.7rem 0;
+  font-size: 0.83rem;
+  color: var(--c-text-dim);
+}
+
+.menu-modal__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem clamp(1.1rem, 3vw, 1.8rem);
+  border-top: 1px solid var(--c-line);
+  background: var(--c-bg-3);
+}
+
+.menu-modal__sum { margin: 0; font-size: 0.94rem; color: var(--c-text-muted); }
+.menu-modal__sum b { color: var(--c-accent-soft); font-variant-numeric: tabular-nums; }
+
+.preorder__hit {
+  display: inline-block;
+  margin-left: 0.25rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(224, 145, 63, 0.18);
+  color: var(--c-accent-soft);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  vertical-align: 0.15em;
+}
+
+/* На телефоне плашка занимает весь экран */
+@media (max-width: 700px) {
+  .menu-modal { padding: 0; }
+  .menu-modal__card { width: 100%; height: 100dvh; border-radius: 0; border: none; }
+}
+
+/* --- Плашка «текст скопирован» ------------------------------------------- */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+}
+.modal[hidden] { display: none; }
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 8, 6, 0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: modal-fade var(--t-med) var(--ease-out);
+}
+
+.modal__card {
+  position: relative;
+  width: min(460px, 100%);
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: clamp(1.5rem, 4vw, 2.2rem);
+  border-radius: var(--radius);
+  border: 1px solid rgba(224, 145, 63, 0.35);
+  background: var(--c-bg-2);
+  box-shadow: var(--shadow-soft), var(--glow-warm);
+  animation: modal-rise var(--t-med) var(--ease-out);
+}
+
+@keyframes modal-fade { from { opacity: 0; } }
+@keyframes modal-rise { from { opacity: 0; transform: translateY(14px) scale(0.98); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .modal__backdrop, .modal__card { animation: none; }
+}
+
+.modal__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(127, 191, 138, 0.14);
+  color: #8FCB99;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.modal__badge::before { content: '✓'; }
+
+/* если скопировать не удалось — плашка становится предупреждающей */
+.modal.is-manual .modal__badge {
+  background: rgba(224, 145, 63, 0.16);
+  color: var(--c-accent-soft);
+}
+.modal.is-manual .modal__badge::before { content: '!'; }
+
+.modal__title { font-size: 1.4rem; margin-bottom: 0.6rem; }
+
+.modal__text {
+  color: var(--c-text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 1.2rem;
+}
+
+.modal__preview {
+  margin: 0 0 1.4rem;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-line);
+  background: rgba(18, 14, 11, 0.7);
+  color: var(--c-text-muted);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  max-height: 30vh;
+  overflow-y: auto;
+}
+
+.modal__actions { display: flex; flex-direction: column; gap: 0.7rem; }
+
+.modal__close {
+  position: absolute;
+  top: 0.8rem; right: 0.8rem;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--c-line);
+  background: transparent;
+  color: var(--c-text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.modal__close:hover { border-color: var(--c-accent); color: var(--c-text); }
+
 /* Запасное поле с текстом заявки — показывается, если буфер обмена недоступен */
 .copy-box {
   border: 1px solid rgba(224, 145, 63, 0.4);
