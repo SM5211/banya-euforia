@@ -57,7 +57,9 @@
     }
 
     /* --- Предзаказ из кухни: плашка со всем меню -------------------------- */
-    var menuModal = form.querySelector('[data-menu-modal]');
+    /* Плашка живёт на уровне страницы, а не внутри формы: у формы бывает
+       анимация появления с transform, и она обрезала бы окно по своей ширине */
+    var menuModal = document.querySelector('[data-menu-modal]');
 
     if (menuModal) {
       /* счётчики порций */
@@ -128,7 +130,7 @@
 
     /* Собирает выбранные блюда: [{название, порция, цена, количество, сумма}] */
     function pickedDishes() {
-      return Array.prototype.slice.call(form.querySelectorAll('[data-dish]'))
+      return Array.prototype.slice.call(document.querySelectorAll('[data-dish]'))
         .map(function (row) {
           var qty = Number(row.querySelector('.stepper__value').value) || 0;
           var price = Number(row.dataset.price) || 0;
@@ -140,7 +142,7 @@
     function updatePreorder() {
       var picked = pickedDishes();
 
-      form.querySelectorAll('[data-dish]').forEach(function (row) {
+      document.querySelectorAll('[data-dish]').forEach(function (row) {
         var qty = Number(row.querySelector('.stepper__value').value) || 0;
         row.classList.toggle('is-picked', qty > 0);
         row.querySelector('[data-minus]').disabled = qty === 0;
@@ -170,7 +172,7 @@
       }
 
       /* итог внизу плашки */
-      var sum = form.querySelector('[data-menu-sum]');
+      var sum = document.querySelector('[data-menu-sum]');
       if (sum) {
         sum.innerHTML = picked.length
           ? 'Выбрано <b>' + label + '</b> · на сумму <b>' + money + '</b>'
