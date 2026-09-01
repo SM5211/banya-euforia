@@ -19,13 +19,13 @@
 <meta name="theme-color" content="#120E0B">
 
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/css/fonts.css?v=12">
-<link rel="stylesheet" href="../vendor/lenis.css?v=12">
-<link rel="stylesheet" href="../assets/css/base.css?v=12">
-<link rel="stylesheet" href="../assets/css/layout.css?v=12">
-<link rel="stylesheet" href="../assets/css/components.css?v=12">
-<link rel="stylesheet" href="../assets/css/sections.css?v=12">
-<link rel="stylesheet" href="../assets/css/pages.css?v=12">
+<link rel="stylesheet" href="../assets/css/fonts.css?v=14">
+<link rel="stylesheet" href="../vendor/lenis.css?v=14">
+<link rel="stylesheet" href="../assets/css/base.css?v=14">
+<link rel="stylesheet" href="../assets/css/layout.css?v=14">
+<link rel="stylesheet" href="../assets/css/components.css?v=14">
+<link rel="stylesheet" href="../assets/css/sections.css?v=14">
+<link rel="stylesheet" href="../assets/css/pages.css?v=14">
 
 <!-- Прячем блоки до инициализации анимации, но только если JS включён -->
 <script>document.documentElement.classList.add('js-reveal-ready');</script>
@@ -144,61 +144,128 @@
 
             <div class="field field--full">
               <span class="field__legend">Предзаказ из кухни <span class="field__hint">по желанию</span></span>
-              <!-- Блюда-хиты из меню. Чтобы добавить или убрать позицию — скопируйте
-                   любой <label class="dish"> и поменяйте название с ценой в value и внутри span. -->
-              <div class="dishes">
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Крылышки барбекю — 380 ₽">
-                  <span class="dish__body">Крылышки барбекю <b>380 ₽</b></span>
-                </label>
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Салат с груздями и свининой — 400 ₽">
-                  <span class="dish__body">Салат с груздями и свининой <b>400 ₽</b></span>
-                </label>
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Пельмени с белыми грибами — 380 ₽">
-                  <span class="dish__body">Пельмени с белыми грибами <b>380 ₽</b></span>
-                </label>
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Ассорти баварских колбас — 1800 ₽">
-                  <span class="dish__body">Ассорти баварских колбас <b>1800 ₽</b></span>
-                </label>
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Рулька свиная — 160 ₽/100 г">
-                  <span class="dish__body">Рулька свиная <b>160 ₽/100 г</b></span>
-                </label>
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Котлетки с птитимом — 430 ₽">
-                  <span class="dish__body">Котлетки с птитимом <b>430 ₽</b></span>
-                </label>
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Сырные палочки — 350 ₽">
-                  <span class="dish__body">Сырные палочки <b>350 ₽</b></span>
-                </label>
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Сырное ассорти — 400 ₽">
-                  <span class="dish__body">Сырное ассорти <b>400 ₽</b></span>
-                </label>
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Сагудай из омуля — 420 ₽">
-                  <span class="dish__body">Сагудай из омуля <b>420 ₽</b></span>
-                </label>
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Цезарь с курицей — 370 ₽">
-                  <span class="dish__body">Цезарь с курицей <b>370 ₽</b></span>
-                </label>
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Чай «Таёжный» — 350 ₽">
-                  <span class="dish__body">Чай «Таёжный» <b>350 ₽</b></span>
-                </label>
-                <label class="dish">
-                  <input type="checkbox" name="dish" value="Морс, 1 л — 300 ₽">
-                  <span class="dish__body">Морс, 1 л <b>300 ₽</b></span>
-                </label>
+
+              <!-- Популярные позиции меню. Чтобы добавить блюдо — скопируйте любой
+                   блок .preorder__item и поменяйте data-name, data-portion, data-price
+                   и подписи внутри. Цена и итог считаются из data-price. -->
+              <div class="preorder">
+                <div class="preorder__item" data-dish data-name="Крылышки барбекю" data-portion="250 г" data-price="380">
+                  <span class="preorder__name">Крылышки барбекю <span class="preorder__portion">250 г</span></span>
+                  <span class="preorder__price">380 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Крылышки барбекю">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Крылышки барбекю">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Крылышки барбекю">+</button>
+                  </div>
+                </div>
+                <div class="preorder__item" data-dish data-name="Салат с груздями и свининой" data-portion="250 г" data-price="400">
+                  <span class="preorder__name">Салат с груздями и свининой <span class="preorder__portion">250 г</span></span>
+                  <span class="preorder__price">400 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Салат с груздями и свининой">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Салат с груздями и свининой">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Салат с груздями и свининой">+</button>
+                  </div>
+                </div>
+                <div class="preorder__item" data-dish data-name="Пельмени с белыми грибами" data-portion="350 г" data-price="380">
+                  <span class="preorder__name">Пельмени с белыми грибами <span class="preorder__portion">350 г</span></span>
+                  <span class="preorder__price">380 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Пельмени с белыми грибами">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Пельмени с белыми грибами">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Пельмени с белыми грибами">+</button>
+                  </div>
+                </div>
+                <div class="preorder__item" data-dish data-name="Ассорти баварских колбас" data-portion="500/350/100 г" data-price="1800">
+                  <span class="preorder__name">Ассорти баварских колбас <span class="preorder__portion">500/350/100 г</span></span>
+                  <span class="preorder__price">1800 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Ассорти баварских колбас">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Ассорти баварских колбас">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Ассорти баварских колбас">+</button>
+                  </div>
+                </div>
+                <div class="preorder__item" data-dish data-name="Рулька свиная" data-portion="за 100 г" data-price="160">
+                  <span class="preorder__name">Рулька свиная <span class="preorder__portion">за 100 г</span></span>
+                  <span class="preorder__price">160 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Рулька свиная">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Рулька свиная">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Рулька свиная">+</button>
+                  </div>
+                </div>
+                <div class="preorder__item" data-dish data-name="Котлетки с птитимом" data-portion="370 г" data-price="430">
+                  <span class="preorder__name">Котлетки с птитимом <span class="preorder__portion">370 г</span></span>
+                  <span class="preorder__price">430 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Котлетки с птитимом">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Котлетки с птитимом">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Котлетки с птитимом">+</button>
+                  </div>
+                </div>
+                <div class="preorder__item" data-dish data-name="Сырные палочки" data-portion="6 шт" data-price="350">
+                  <span class="preorder__name">Сырные палочки <span class="preorder__portion">6 шт</span></span>
+                  <span class="preorder__price">350 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Сырные палочки">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Сырные палочки">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Сырные палочки">+</button>
+                  </div>
+                </div>
+                <div class="preorder__item" data-dish data-name="Сырное ассорти" data-portion="180 г" data-price="400">
+                  <span class="preorder__name">Сырное ассорти <span class="preorder__portion">180 г</span></span>
+                  <span class="preorder__price">400 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Сырное ассорти">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Сырное ассорти">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Сырное ассорти">+</button>
+                  </div>
+                </div>
+                <div class="preorder__item" data-dish data-name="Сагудай из омуля" data-portion="150 г" data-price="420">
+                  <span class="preorder__name">Сагудай из омуля <span class="preorder__portion">150 г</span></span>
+                  <span class="preorder__price">420 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Сагудай из омуля">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Сагудай из омуля">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Сагудай из омуля">+</button>
+                  </div>
+                </div>
+                <div class="preorder__item" data-dish data-name="Цезарь с курицей" data-portion="250 г" data-price="370">
+                  <span class="preorder__name">Цезарь с курицей <span class="preorder__portion">250 г</span></span>
+                  <span class="preorder__price">370 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Цезарь с курицей">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Цезарь с курицей">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Цезарь с курицей">+</button>
+                  </div>
+                </div>
+                <div class="preorder__item" data-dish data-name="Чай «Таёжный»" data-portion="700 мл" data-price="350">
+                  <span class="preorder__name">Чай «Таёжный» <span class="preorder__portion">700 мл</span></span>
+                  <span class="preorder__price">350 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Чай «Таёжный»">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Чай «Таёжный»">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Чай «Таёжный»">+</button>
+                  </div>
+                </div>
+                <div class="preorder__item" data-dish data-name="Морс" data-portion="1 л" data-price="300">
+                  <span class="preorder__name">Морс <span class="preorder__portion">1 л</span></span>
+                  <span class="preorder__price">300 ₽</span>
+                  <div class="stepper">
+                    <button class="stepper__btn" type="button" data-minus aria-label="Убрать порцию: Морс">−</button>
+                    <input class="stepper__value" type="number" value="0" min="0" max="20" inputmode="numeric" aria-label="Количество: Морс">
+                    <button class="stepper__btn" type="button" data-plus aria-label="Добавить порцию: Морс">+</button>
+                  </div>
+                </div>
               </div>
+
+              <p class="preorder__total" data-preorder-summary hidden>
+                Выбрано <b data-preorder-count>0</b> · на сумму <b data-preorder-total>0 ₽</b>
+              </p>
+
               <p class="dishes__note">
-                Отметьте, что подать к приезду — блюда попадут в заявку. Количество уточним
-                при подтверждении. <a href="../menu/">Всё меню кафе</a>
+                Отметьте, что и сколько подать к приезду — попадёт в заявку.
+                Точную сумму подтвердим при бронировании. <a href="../menu/">Всё меню кафе</a>
               </p>
             </div>
 
@@ -437,19 +504,19 @@
   </ul>
 </div>
 
-<script src="../vendor/gsap.min.js?v=12" defer></script>
-<script src="../vendor/ScrollTrigger.min.js?v=12" defer></script>
-<script src="../vendor/lenis.min.js?v=12" defer></script>
-<script src="../assets/js/motion.js?v=12" defer></script>
-<script src="../assets/js/lenis-init.js?v=12" defer></script>
-<script src="../assets/js/reveal.js?v=12" defer></script>
-<script src="../assets/js/fx/ripple.js?v=12" defer></script>
-<script src="../assets/js/fx/steam.js?v=12" defer></script>
-<script src="../assets/js/fx/embers.js?v=12" defer></script>
-<script src="../assets/js/hero-video.js?v=12" defer></script>
-<script src="../assets/js/lightbox.js?v=12" defer></script>
-<script src="../assets/js/booking-form.js?v=12" defer></script>
-<script src="../assets/js/analytics.js?v=12" defer></script>
-<script src="../assets/js/app.js?v=12" defer></script>
+<script src="../vendor/gsap.min.js?v=14" defer></script>
+<script src="../vendor/ScrollTrigger.min.js?v=14" defer></script>
+<script src="../vendor/lenis.min.js?v=14" defer></script>
+<script src="../assets/js/motion.js?v=14" defer></script>
+<script src="../assets/js/lenis-init.js?v=14" defer></script>
+<script src="../assets/js/reveal.js?v=14" defer></script>
+<script src="../assets/js/fx/ripple.js?v=14" defer></script>
+<script src="../assets/js/fx/steam.js?v=14" defer></script>
+<script src="../assets/js/fx/embers.js?v=14" defer></script>
+<script src="../assets/js/hero-video.js?v=14" defer></script>
+<script src="../assets/js/lightbox.js?v=14" defer></script>
+<script src="../assets/js/booking-form.js?v=14" defer></script>
+<script src="../assets/js/analytics.js?v=14" defer></script>
+<script src="../assets/js/app.js?v=14" defer></script>
 </body>
 </html>

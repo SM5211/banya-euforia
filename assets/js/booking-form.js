@@ -56,6 +56,71 @@
       });
     }
 
+    /* --- Предзаказ из кухни: счётчики порций ------------------------------ */
+    var preorder = form.querySelector('.preorder');
+    if (preorder) {
+      preorder.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-plus], [data-minus]');
+        if (!btn) return;
+        var row = btn.closest('[data-dish]');
+        var input = row.querySelector('.stepper__value');
+        var step = btn.hasAttribute('data-plus') ? 1 : -1;
+        setQty(input, (Number(input.value) || 0) + step);
+      });
+      preorder.addEventListener('input', function (e) {
+        if (e.target.classList.contains('stepper__value')) setQty(e.target, Number(e.target.value) || 0);
+      });
+      updatePreorder();
+    }
+
+    function setQty(input, value) {
+      var max = Number(input.max) || 20;
+      input.value = Math.max(0, Math.min(max, value));
+      updatePreorder();
+    }
+
+    /* Собирает выбранные блюда: [{название, порция, цена, количество, сумма}] */
+    function pickedDishes() {
+      return Array.prototype.slice.call(form.querySelectorAll('[data-dish]'))
+        .map(function (row) {
+          var qty = Number(row.querySelector('.stepper__value').value) || 0;
+          return {
+            name: row.dataset.name,
+            portion: row.dataset.portion,
+            price: Number(row.dataset.price) || 0,
+            qty: qty,
+            sum: qty * (Number(row.dataset.price) || 0)
+          };
+        })
+        .filter(function (d) { return d.qty > 0; });
+    }
+
+    function updatePreorder() {
+      var picked = pickedDishes();
+      form.querySelectorAll('[data-dish]').forEach(function (row) {
+        var qty = Number(row.querySelector('.stepper__value').value) || 0;
+        row.classList.toggle('is-picked', qty > 0);
+        row.querySelector('[data-minus]').disabled = qty === 0;
+      });
+
+      var summary = form.querySelector('[data-preorder-summary]');
+      if (!summary) return;
+      if (!picked.length) { summary.hidden = true; return; }
+
+      var count = picked.reduce(function (n, d) { return n + d.qty; }, 0);
+      var total = picked.reduce(function (n, d) { return n + d.sum; }, 0);
+      summary.hidden = false;
+      summary.querySelector('[data-preorder-count]').textContent = count + ' ' + plural(count, ['позиция', 'позиции', 'позиций']);
+      summary.querySelector('[data-preorder-total]').textContent = total.toLocaleString('ru-RU') + ' ₽';
+    }
+
+    function plural(n, forms) {
+      var n10 = n % 10, n100 = n % 100;
+      if (n10 === 1 && n100 !== 11) return forms[0];
+      if (n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)) return forms[1];
+      return forms[2];
+    }
+
     /* --- Валидация ------------------------------------------------------- */
     function validateField(field) {
       var wrap = field.closest('.field');
@@ -120,13 +185,16 @@
         'Время: ' + get('time'),
         'Гостей: ' + get('guests')
       ];
-      /* Предзаказ из кухни — то, что гость отметил галочками */
-      var dishes = Array.prototype.slice.call(form.querySelectorAll('input[name="dish"]:checked'))
-        .map(function (d) { return d.value; });
+      /* Предзаказ из кухни — с количеством порций и суммой */
+      var dishes = pickedDishes();
       if (dishes.length) {
         lines.push('');
         lines.push('Предзаказ из кухни:');
-        dishes.forEach(function (d) { lines.push('• ' + d); });
+        dishes.forEach(function (d) {
+          lines.push('• ' + d.name + ' (' + d.portion + ') × ' + d.qty + ' — ' + d.sum.toLocaleString('ru-RU') + ' ₽');
+        });
+        var total = dishes.reduce(function (n, d) { return n + d.sum; }, 0);
+        lines.push('Итого по кухне: ' + total.toLocaleString('ru-RU') + ' ₽');
       }
 
       var comment = get('comment');
