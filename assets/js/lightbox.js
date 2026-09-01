@@ -19,7 +19,9 @@
     box.setAttribute('aria-hidden', 'true');
     box.innerHTML =
       '<div class="lightbox__backdrop" data-close></div>' +
-      '<div class="lightbox__dialog" role="dialog" aria-modal="true" aria-label="Просмотр фото">' +
+      /* data-lenis-prevent — иначе плавная прокрутка перехватывает жест
+         и внутри лайтбокса ничего не листается */
+      '<div class="lightbox__dialog" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Просмотр фото">' +
         '<button class="lightbox__close" type="button" data-close aria-label="Закрыть">✕</button>' +
         '<button class="lightbox__nav lightbox__nav--prev" type="button" data-prev aria-label="Предыдущее фото">‹</button>' +
         '<figure class="lightbox__figure"><div class="lightbox__media"></div><figcaption class="lightbox__caption"></figcaption></figure>' +
