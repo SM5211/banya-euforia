@@ -157,18 +157,29 @@
         return;
       }
 
-      /* Окно открываем сразу в обработчике клика — иначе браузер сочтёт его
-         всплывающим и заблокирует */
+      /* ВАЖЕН ПОРЯДОК. Сначала копируем — синхронно, пока страница ещё в фокусе.
+         Если открыть чат первым, браузер уводит фокус на Instagram и запрещает
+         запись в буфер обмена (NotAllowedError) — текст не копировался. */
+      var copied = copySync(text);
+
+      /* Окно открываем тут же, внутри обработчика клика, иначе браузер
+         сочтёт его всплывающим и заблокирует */
       var win = window.open(INSTAGRAM_DM, '_blank', 'noopener');
 
       EUF.goal && EUF.goal('booking_sent');
-      copyToClipboard(text).then(function () {
+
+      if (copied) {
         setStatus('Текст заявки скопирован. Вставьте его в чат Instagram и отправьте — мы ответим и подтвердим время.', 'success');
         if (!win) showCopyBox(text, 'Не получилось открыть Instagram. Откройте чат @banya_euforia_ и вставьте текст:');
-      }).catch(function () {
+      } else {
+        /* запасной путь: показываем текст прямо на странице */
         showCopyBox(text, 'Скопируйте текст заявки и отправьте его в Instagram:');
         setStatus('Скопируйте текст ниже и отправьте в чат Instagram.', 'pending');
-      });
+        /* и параллельно пробуем современный способ — вдруг сработает */
+        copyToClipboard(text).then(function () {
+          setStatus('Текст заявки скопирован. Вставьте его в чат Instagram и отправьте.', 'success');
+        }).catch(function () {});
+      }
     });
 
     /* Кнопка WhatsApp: там текст подставляется сам, копировать ничего не надо */
@@ -179,6 +190,37 @@
         window.open('https://wa.me/' + WHATSAPP_PHONE + '?text=' + encodeURIComponent(buildText()), '_blank', 'noopener');
         setStatus('Открыли WhatsApp — текст заявки уже подставлен, осталось отправить.', 'success');
       });
+    }
+
+    /* Синхронное копирование — работает внутри клика и не зависит от того,
+       успел ли браузер увести фокус в другое приложение.
+       execCommand устарел, но остаётся единственным синхронным способом,
+       и поддерживается всеми актуальными браузерами. */
+    function copySync(text) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;';
+      document.body.appendChild(ta);
+      var ok = false;
+      try {
+        if (/ipad|iphone|ipod/i.test(navigator.userAgent)) {
+          /* на iOS нужен именно диапазон выделения, ta.select() не срабатывает */
+          var range = document.createRange();
+          range.selectNodeContents(ta);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          ta.setSelectionRange(0, text.length);
+        } else {
+          ta.select();
+        }
+        ok = document.execCommand('copy');
+      } catch (e) {
+        ok = false;
+      }
+      document.body.removeChild(ta);
+      return ok;
     }
 
     function copyToClipboard(text) {
