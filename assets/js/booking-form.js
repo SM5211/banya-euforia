@@ -56,22 +56,69 @@
       });
     }
 
-    /* --- Предзаказ из кухни: счётчики порций ------------------------------ */
-    var preorder = form.querySelector('.preorder');
-    if (preorder) {
-      preorder.addEventListener('click', function (e) {
+    /* --- Предзаказ из кухни: плашка со всем меню -------------------------- */
+    var menuModal = form.querySelector('[data-menu-modal]');
+
+    if (menuModal) {
+      /* счётчики порций */
+      menuModal.addEventListener('click', function (e) {
         var btn = e.target.closest('[data-plus], [data-minus]');
-        if (!btn) return;
-        var row = btn.closest('[data-dish]');
-        var input = row.querySelector('.stepper__value');
-        var step = btn.hasAttribute('data-plus') ? 1 : -1;
-        setQty(input, (Number(input.value) || 0) + step);
+        if (btn) {
+          var input = btn.closest('[data-dish]').querySelector('.stepper__value');
+          setQty(input, (Number(input.value) || 0) + (btn.hasAttribute('data-plus') ? 1 : -1));
+          return;
+        }
+        if (e.target.closest('[data-menu-close], [data-menu-done]')) { closeMenu(); return; }
+        var tab = e.target.closest('[data-jump]');
+        if (tab) {
+          var target = menuModal.querySelector('#' + tab.dataset.jump);
+          var body = menuModal.querySelector('[data-menu-scroll]');
+          if (target && body) {
+            /* считаем позицию относительно самой прокручиваемой области:
+               offsetTop здесь врёт, потому что карточка позиционирована */
+            /* offsetTop у обоих считается от карточки, поэтому разница —
+               это честное смещение раздела внутри прокручиваемой области.
+               Через getBoundingClientRect цифра плывёт из-за липких заголовков. */
+            var top = target.offsetTop - body.offsetTop;
+            /* прыжок мгновенный: плавная прокрутка внутри плашки
+               в части браузеров просто не срабатывает */
+            body.scrollTop = Math.max(0, top - 6);
+          }
+          menuModal.querySelectorAll('.menu-modal__tab').forEach(function (t) {
+            t.classList.toggle('is-active', t === tab);
+          });
+        }
       });
-      preorder.addEventListener('input', function (e) {
+
+      menuModal.addEventListener('input', function (e) {
         if (e.target.classList.contains('stepper__value')) setQty(e.target, Number(e.target.value) || 0);
       });
+
+      form.querySelectorAll('[data-preorder-open]').forEach(function (btn) {
+        btn.addEventListener('click', openMenu);
+      });
+
       updatePreorder();
     }
+
+    function openMenu() {
+      menuModal.hidden = false;
+      document.body.classList.add('is-locked');
+      if (EUF.lenis) EUF.lenis.stop();
+      document.addEventListener('keydown', onMenuKey);
+      menuModal.querySelector('.menu-modal__close').focus();
+    }
+
+    function closeMenu() {
+      menuModal.hidden = true;
+      document.body.classList.remove('is-locked');
+      if (EUF.lenis) EUF.lenis.start();
+      document.removeEventListener('keydown', onMenuKey);
+      var opener = form.querySelector('[data-preorder-open]');
+      if (opener) opener.focus();
+    }
+
+    function onMenuKey(e) { if (e.key === 'Escape') closeMenu(); }
 
     function setQty(input, value) {
       var max = Number(input.max) || 20;
@@ -84,34 +131,51 @@
       return Array.prototype.slice.call(form.querySelectorAll('[data-dish]'))
         .map(function (row) {
           var qty = Number(row.querySelector('.stepper__value').value) || 0;
-          return {
-            name: row.dataset.name,
-            portion: row.dataset.portion,
-            price: Number(row.dataset.price) || 0,
-            qty: qty,
-            sum: qty * (Number(row.dataset.price) || 0)
-          };
+          var price = Number(row.dataset.price) || 0;
+          return { name: row.dataset.name, portion: row.dataset.portion, price: price, qty: qty, sum: qty * price };
         })
         .filter(function (d) { return d.qty > 0; });
     }
 
     function updatePreorder() {
       var picked = pickedDishes();
+
       form.querySelectorAll('[data-dish]').forEach(function (row) {
         var qty = Number(row.querySelector('.stepper__value').value) || 0;
         row.classList.toggle('is-picked', qty > 0);
         row.querySelector('[data-minus]').disabled = qty === 0;
       });
 
-      var summary = form.querySelector('[data-preorder-summary]');
-      if (!summary) return;
-      if (!picked.length) { summary.hidden = true; return; }
-
       var count = picked.reduce(function (n, d) { return n + d.qty; }, 0);
       var total = picked.reduce(function (n, d) { return n + d.sum; }, 0);
-      summary.hidden = false;
-      summary.querySelector('[data-preorder-count]').textContent = count + ' ' + plural(count, ['позиция', 'позиции', 'позиций']);
-      summary.querySelector('[data-preorder-total]').textContent = total.toLocaleString('ru-RU') + ' ₽';
+      var money = total.toLocaleString('ru-RU') + ' ₽';
+      var label = count + ' ' + plural(count, ['позиция', 'позиции', 'позиций']);
+
+      /* строка под кнопкой в форме */
+      var summary = form.querySelector('[data-preorder-summary]');
+      if (summary) {
+        summary.hidden = !picked.length;
+        if (picked.length) {
+          summary.querySelector('[data-preorder-count]').textContent = label;
+          summary.querySelector('[data-preorder-total]').textContent = money;
+        }
+      }
+
+      /* подпись на кнопке открытия */
+      var brief = form.querySelector('[data-preorder-brief]');
+      if (brief) {
+        brief.textContent = picked.length
+          ? 'Выбрано: ' + label + ' на ' + money
+          : 'Закуски, горячее, напитки — 50 позиций';
+      }
+
+      /* итог внизу плашки */
+      var sum = form.querySelector('[data-menu-sum]');
+      if (sum) {
+        sum.innerHTML = picked.length
+          ? 'Выбрано <b>' + label + '</b> · на сумму <b>' + money + '</b>'
+          : 'Ничего не выбрано';
+      }
     }
 
     function plural(n, forms) {
