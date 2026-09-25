@@ -1,4 +1,12 @@
-User-agent: *
-Allow: /
+# САЙТ ВРЕМЕННО ЗАКРЫТ ОТ ПОИСКОВИКОВ.
+# Открывается только по прямой ссылке — в поиске его нет.
+#
+# ПЕРЕД ЗАПУСКОМ РЕКЛАМЫ вернуть содержимое файла к этому виду:
+#   User-agent: *
+#   Allow: /
+#
+#   Sitemap: https://banyaeuforia.ru/sitemap.xml
+# и убрать <meta name="robots" content="noindex, nofollow"> из шести html-файлов.
 
-Sitemap: https://sm5211.github.io/banya-euforia/sitemap.xml
+User-agent: *
+Disallow: /
