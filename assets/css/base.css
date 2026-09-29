@@ -83,6 +83,12 @@ body {
 
 body.is-locked { overflow: hidden; }
 
+/* Атрибут hidden обязан побеждать любые наши display.
+   Браузерное правило [hidden]{display:none} по весу равно обычному классу,
+   а при равенстве выигрывает наш стиль — из-за этого перекрытие с экраном
+   отправки заявки висело поверх страницы с самой загрузки. */
+[hidden] { display: none !important; }
+
 img, video, svg, canvas { display: block; max-width: 100%; }
 img, video { height: auto; }
 
