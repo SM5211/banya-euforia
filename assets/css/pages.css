@@ -425,12 +425,12 @@
    и не понимали, что поле пустое. Делаем её заметно бледнее и курсивом. */
 .field input::placeholder,
 .field textarea::placeholder {
-  color: rgba(242, 237, 231, 0.17);
+  color: rgba(242, 237, 231, 0.10);
   font-style: italic;
   opacity: 1;                     /* Firefox сам приглушает — не даём дважды */
 }
 .field input:focus::placeholder,
-.field textarea:focus::placeholder { color: rgba(242, 237, 231, 0.11); }
+.field textarea:focus::placeholder { color: rgba(242, 237, 231, 0.06); }
 
 .field input:focus,
 .field select:focus,
