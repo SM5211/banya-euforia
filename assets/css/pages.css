@@ -1031,6 +1031,69 @@
   100% { opacity: 0; transform: translateY(-74px) scale(2.6) }
 }
 
+/* Кольцо прогресса вокруг чаши: видно, что процесс идёт и сколько осталось */
+.sending__ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);   /* чтобы заполнялось от двенадцати часов */
+  overflow: visible;
+}
+
+.sending__ring circle {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.sending__ring-track { stroke: rgba(232, 238, 240, 0.12); }
+
+.sending__ring-fill {
+  stroke: var(--c-accent);
+  /* длина окружности при r=54: 2πr ≈ 339.3 */
+  stroke-dasharray: 339.3;
+  stroke-dashoffset: 339.3;
+  filter: drop-shadow(0 0 6px rgba(224, 145, 63, 0.55));
+  /* Точного времени ответа мы не знаем, поэтому кольцо идёт асимптотой:
+     первые секунды бежит, дальше всё медленнее и замирает у 93%.
+     Так видно, что процесс жив, и нет вранья «осталось две секунды».
+     До конца кольцо доводит только реальный ответ (класс is-done). */
+  animation: sending-ring 16s cubic-bezier(0.05, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes sending-ring {
+  from { stroke-dashoffset: 339.3 }
+  to   { stroke-dashoffset: 24 }      /* 24 из 339 — это те самые 93% */
+}
+
+/* Ответ пришёл: кольцо мгновенно дозаполняется и остаётся ободком галочки */
+.sending.is-done .sending__ring-fill {
+  animation: none;
+  stroke-dashoffset: 0;
+  stroke: var(--c-accent-soft);
+  transition: stroke-dashoffset 0.4s var(--ease-out);
+}
+
+/* у галочки свой круг — он больше не нужен, ободком служит кольцо */
+.sending.is-done .sending__check circle { display: none; }
+
+/* Кнопка выхода: появляется, если ожидание затянулось */
+.sending__cancel {
+  margin-top: 1.2rem;
+  background: none;
+  border: 1px solid var(--c-line);
+  border-radius: 999px;
+  color: var(--c-text-dim);
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.6rem 1.4rem;
+  min-height: 44px;
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out);
+}
+.sending__cancel:hover { color: var(--c-text); border-color: var(--c-text-dim); }
+
 /* Галочка: появляется вместо пара, когда заявка дошла */
 .sending__check {
   position: absolute;
@@ -1081,6 +1144,7 @@
   .sending__card,
   .sending__wisp,
   .sending__water { animation: none }
+  .sending__ring-fill { animation: none; stroke-dashoffset: 170 }
   .sending__phrase { transition: none }
   .sending.is-done .sending__check circle,
   .sending.is-done .sending__check path { animation: none; stroke-dashoffset: 0 }

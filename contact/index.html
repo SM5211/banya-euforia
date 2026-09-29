@@ -28,13 +28,13 @@
 <link rel="icon" href="../favicon.ico" sizes="32x32">
 <!-- Иконка для «На экран Домой» на айфоне -->
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
-<link rel="stylesheet" href="../assets/css/fonts.css?v=30">
-<link rel="stylesheet" href="../vendor/lenis.css?v=30">
-<link rel="stylesheet" href="../assets/css/base.css?v=30">
-<link rel="stylesheet" href="../assets/css/layout.css?v=30">
-<link rel="stylesheet" href="../assets/css/components.css?v=30">
-<link rel="stylesheet" href="../assets/css/sections.css?v=30">
-<link rel="stylesheet" href="../assets/css/pages.css?v=30">
+<link rel="stylesheet" href="../assets/css/fonts.css?v=31">
+<link rel="stylesheet" href="../vendor/lenis.css?v=31">
+<link rel="stylesheet" href="../assets/css/base.css?v=31">
+<link rel="stylesheet" href="../assets/css/layout.css?v=31">
+<link rel="stylesheet" href="../assets/css/components.css?v=31">
+<link rel="stylesheet" href="../assets/css/sections.css?v=31">
+<link rel="stylesheet" href="../assets/css/pages.css?v=31">
 
 <!-- Прячем блоки до инициализации анимации, но только если JS включён -->
 <script>document.documentElement.classList.add('js-reveal-ready');</script>
@@ -932,6 +932,13 @@
       <span class="sending__wisp"></span>
       <span class="sending__wisp"></span>
       <span class="sending__water"></span>
+
+      <!-- Кольцо прогресса: заполняется, пока идёт отправка -->
+      <svg class="sending__ring" viewBox="0 0 120 120">
+        <circle class="sending__ring-track" cx="60" cy="60" r="54" />
+        <circle class="sending__ring-fill" cx="60" cy="60" r="54" data-sending-ring />
+      </svg>
+
       <svg class="sending__check" viewBox="0 0 52 52">
         <circle cx="26" cy="26" r="23" />
         <path d="M15 27.5 22.5 35 37.5 19" />
@@ -940,6 +947,7 @@
 
     <p class="sending__title" data-sending-title>Отправляем заявку</p>
     <p class="sending__phrase" data-sending-phrase>Раздуваем угли…</p>
+    <button class="sending__cancel" type="button" data-sending-cancel hidden>Отменить</button>
   </div>
 </div>
 
@@ -978,19 +986,19 @@
   </ul>
 </div>
 
-<script src="../vendor/gsap.min.js?v=30" defer></script>
-<script src="../vendor/ScrollTrigger.min.js?v=30" defer></script>
-<script src="../vendor/lenis.min.js?v=30" defer></script>
-<script src="../assets/js/motion.js?v=30" defer></script>
-<script src="../assets/js/lenis-init.js?v=30" defer></script>
-<script src="../assets/js/reveal.js?v=30" defer></script>
-<script src="../assets/js/fx/ripple.js?v=30" defer></script>
-<script src="../assets/js/fx/steam.js?v=30" defer></script>
-<script src="../assets/js/fx/embers.js?v=30" defer></script>
-<script src="../assets/js/hero-video.js?v=30" defer></script>
-<script src="../assets/js/lightbox.js?v=30" defer></script>
-<script src="../assets/js/booking-form.js?v=30" defer></script>
-<script src="../assets/js/analytics.js?v=30" defer></script>
-<script src="../assets/js/app.js?v=30" defer></script>
+<script src="../vendor/gsap.min.js?v=31" defer></script>
+<script src="../vendor/ScrollTrigger.min.js?v=31" defer></script>
+<script src="../vendor/lenis.min.js?v=31" defer></script>
+<script src="../assets/js/motion.js?v=31" defer></script>
+<script src="../assets/js/lenis-init.js?v=31" defer></script>
+<script src="../assets/js/reveal.js?v=31" defer></script>
+<script src="../assets/js/fx/ripple.js?v=31" defer></script>
+<script src="../assets/js/fx/steam.js?v=31" defer></script>
+<script src="../assets/js/fx/embers.js?v=31" defer></script>
+<script src="../assets/js/hero-video.js?v=31" defer></script>
+<script src="../assets/js/lightbox.js?v=31" defer></script>
+<script src="../assets/js/booking-form.js?v=31" defer></script>
+<script src="../assets/js/analytics.js?v=31" defer></script>
+<script src="../assets/js/app.js?v=31" defer></script>
 </body>
 </html>

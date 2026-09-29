@@ -307,6 +307,7 @@
          Обрыв ожидания не отменяет запись: Google всё равно дописывает строку,
          так что заявка не пропадёт, в худшем случае продублируется звонком. */
       var stop = window.AbortController ? new AbortController() : null;
+      activeAbort = stop;
       var timer = setTimeout(function () { if (stop) stop.abort(); }, 45000);
 
       return fetch(endpoint, {
@@ -353,17 +354,33 @@
 
     var sendingEl = document.querySelector('[data-sending]');
     var phraseTimer = null;
+    var cancelTimer = null;
+    var activeAbort = null;      // чем прервать текущую отправку
+    var cancelledByUser = false;
 
     function showSending() {
       if (!sendingEl) return;
       var titleEl = sendingEl.querySelector('[data-sending-title]');
       var phraseEl = sendingEl.querySelector('[data-sending-phrase]');
+      var cancelBtn = sendingEl.querySelector('[data-sending-cancel]');
 
+      cancelledByUser = false;
       sendingEl.classList.remove('is-done');
       titleEl.textContent = 'Отправляем заявку';
+      if (cancelBtn) cancelBtn.hidden = true;
+
       sendingEl.hidden = false;
       document.body.classList.add('is-locked');
       if (EUF.lenis) EUF.lenis.stop();
+
+      /* Если ответа нет дольше пяти секунд — даём выйти, чтобы человек
+         не чувствовал себя запертым. Кнопка прерывает ожидание. */
+      clearTimeout(cancelTimer);
+      cancelTimer = setTimeout(function () {
+        if (cancelBtn && !sendingEl.hidden) cancelBtn.hidden = false;
+      }, 5000);
+
+      document.addEventListener('keydown', onSendingKey);
 
       /* перемешиваем копию списка, чтобы не трогать исходный порядок */
       var queue = SENDING_PHRASES.slice();
@@ -385,12 +402,30 @@
       }, 2200);
     }
 
+    function onSendingKey(e) {
+      if (e.key === 'Escape') cancelSending();
+    }
+
+    /* Гость решил не ждать: прерываем запрос и закрываем экран.
+       Форму разблокируем здесь же, а не ждём, пока прерванный запрос
+       свалится в catch: в старых браузерах AbortController может
+       отсутствовать, и тогда кнопка осталась бы заблокированной навсегда. */
+    function cancelSending() {
+      cancelledByUser = true;
+      if (activeAbort) activeAbort.abort();
+      hideSending();
+      submitBtn.disabled = false;
+      setStatus('Отправка отменена. Можно отправить заново или позвонить: 58-25-25.', 'pending');
+    }
+
     function finishSending(ok) {
       if (!sendingEl) return;
       clearInterval(phraseTimer);
+      clearTimeout(cancelTimer);
 
       if (!ok) { hideSending(); return; }
 
+      sendingEl.querySelector('[data-sending-cancel]').hidden = true;
       sendingEl.classList.add('is-done');
       sendingEl.querySelector('[data-sending-title]').textContent = 'Заявка принята!';
       var phraseEl = sendingEl.querySelector('[data-sending-phrase]');
@@ -402,10 +437,20 @@
     function hideSending() {
       if (!sendingEl) return;
       clearInterval(phraseTimer);
+      clearTimeout(cancelTimer);
+      document.removeEventListener('keydown', onSendingKey);
       sendingEl.hidden = true;
       sendingEl.classList.remove('is-done');
       document.body.classList.remove('is-locked');
       if (EUF.lenis) EUF.lenis.start();
+    }
+
+    if (sendingEl) {
+      sendingEl.querySelector('[data-sending-cancel]').addEventListener('click', cancelSending);
+      /* клик по затемнению — тоже выход, но только когда кнопка уже показалась */
+      sendingEl.querySelector('.sending__backdrop').addEventListener('click', function () {
+        if (!sendingEl.querySelector('[data-sending-cancel]').hidden) cancelSending();
+      });
     }
 
     /* --- Отправка -------------------------------------------------------- */
@@ -426,11 +471,18 @@
         setStatus('Заявка принята! Перезвоним, чтобы подтвердить время.', 'success');
       }).catch(function (err) {
         finishSending(false);
+        submitBtn.disabled = false;
+
+        /* Гость сам нажал «Отменить» — это не поломка, ничего не пугаем */
+        if (cancelledByUser) {
+          setStatus('Отправка отменена. Можно отправить заново или позвонить: 58-25-25.', 'pending');
+          return;
+        }
+
         /* Заявку нельзя терять. Показываем её текст прямо на странице
            и копируем в буфер: гость сможет продиктовать или переслать
            её по телефону, а не уйдёт ни с чем. */
         console.error(err);
-        submitBtn.disabled = false;
         var text = buildText();
         var copied = copySync(text);
         if (!copied) copyToClipboard(text).catch(function () {});
