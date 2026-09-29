@@ -333,6 +333,81 @@
       updatePreorder();
     }
 
+    /* --- Экран отправки --------------------------------------------------- */
+
+    /* Ответа от таблицы ждём несколько секунд. Чтобы это не выглядело
+       зависанием, показываем перекрытие с паром и меняем подписи.
+       Порядок фраз каждый раз новый — на второй заявке будет не то же самое. */
+    var SENDING_PHRASES = [
+      'Раздуваем угли в печи…',
+      'Замачиваем веник…',
+      'Прогреваем камни…',
+      'Наливаем воду в купель…',
+      'Проверяем градус в парной…',
+      'Стелем свежие простыни…',
+      'Договариваемся с погодой…',
+      'Пересчитываем веники…',
+      'Подогреваем бассейн…',
+      'Ставим чайник на травы…'
+    ];
+
+    var sendingEl = document.querySelector('[data-sending]');
+    var phraseTimer = null;
+
+    function showSending() {
+      if (!sendingEl) return;
+      var titleEl = sendingEl.querySelector('[data-sending-title]');
+      var phraseEl = sendingEl.querySelector('[data-sending-phrase]');
+
+      sendingEl.classList.remove('is-done');
+      titleEl.textContent = 'Отправляем заявку';
+      sendingEl.hidden = false;
+      document.body.classList.add('is-locked');
+      if (EUF.lenis) EUF.lenis.stop();
+
+      /* перемешиваем копию списка, чтобы не трогать исходный порядок */
+      var queue = SENDING_PHRASES.slice();
+      for (var i = queue.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = queue[i]; queue[i] = queue[j]; queue[j] = tmp;
+      }
+
+      var n = 0;
+      phraseEl.textContent = queue[0];
+      phraseTimer = setInterval(function () {
+        n = (n + 1) % queue.length;
+        /* сначала гасим старую подпись, на полпути подменяем текст */
+        phraseEl.classList.add('is-swap');
+        setTimeout(function () {
+          phraseEl.textContent = queue[n];
+          phraseEl.classList.remove('is-swap');
+        }, 300);
+      }, 2200);
+    }
+
+    function finishSending(ok) {
+      if (!sendingEl) return;
+      clearInterval(phraseTimer);
+
+      if (!ok) { hideSending(); return; }
+
+      sendingEl.classList.add('is-done');
+      sendingEl.querySelector('[data-sending-title]').textContent = 'Заявка принята!';
+      var phraseEl = sendingEl.querySelector('[data-sending-phrase]');
+      phraseEl.classList.remove('is-swap');
+      phraseEl.textContent = 'Перезвоним, чтобы подтвердить дату и время. Баню уже греем.';
+      setTimeout(hideSending, 2600);
+    }
+
+    function hideSending() {
+      if (!sendingEl) return;
+      clearInterval(phraseTimer);
+      sendingEl.hidden = true;
+      sendingEl.classList.remove('is-done');
+      document.body.classList.remove('is-locked');
+      if (EUF.lenis) EUF.lenis.start();
+    }
+
     /* --- Отправка -------------------------------------------------------- */
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -340,14 +415,17 @@
 
       submitBtn.disabled = true;
       setStatus('Отправляем заявку… это занимает несколько секунд', 'pending');
+      showSending();
 
       sendToSheet('сайт').then(function () {
         form.reset();
         resetDishes();
         submitBtn.disabled = false;
         if (EUF.goal) EUF.goal('booking_sent');
+        finishSending(true);
         setStatus('Заявка принята! Перезвоним, чтобы подтвердить время.', 'success');
       }).catch(function (err) {
+        finishSending(false);
         /* Заявку нельзя терять. Показываем её текст прямо на странице
            и копируем в буфер: гость сможет продиктовать или переслать
            её по телефону, а не уйдёт ни с чем. */
