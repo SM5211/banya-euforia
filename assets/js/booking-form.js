@@ -225,7 +225,7 @@
       fields.forEach(function (field) { if (!validateField(field)) ok = false; });
       if (!ok) {
         setStatus('Проверьте отмеченные поля — что-то заполнено не до конца.', 'error');
-        var first = form.querySelector('.field.has-error input, .field.has-error textarea');
+        var first = form.querySelector('.field.has-error input, .field.has-error select, .field.has-error textarea');
         if (first) first.focus();
       }
       return ok;

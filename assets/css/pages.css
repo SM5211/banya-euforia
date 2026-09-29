@@ -37,6 +37,16 @@
   color: var(--c-text-dim);
   margin-bottom: 1.4rem;
 }
+/* Ссылка «Главная» в крошках была высотой 22px — для пальца мало.
+   Растягиваем зону нажатия, отрицательный отступ снизу возвращает
+   прежний визуальный отступ до заголовка */
+.crumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.crumbs { margin-bottom: 0.7rem; }
+
 .crumbs a:hover { color: var(--c-accent-soft); }
 
 /* --- Цены ----------------------------------------------------------------- */
@@ -389,21 +399,63 @@
 .field label { font-size: 0.85rem; color: var(--c-text-muted); }
 .field label .req { color: var(--c-accent); }
 
+/* Поля формы не дают себя сжать меньше своего содержимого: и flex-, и
+   grid-элементы по умолчанию имеют min-width: auto. У родного поля даты
+   в iOS внутренняя ширина больше колонки — поэтому на айфоне «Дата»
+   и «Во сколько» выпирали за край, а остальные поля стояли ровно. */
+.field { min-width: 0; }
+
 .field input,
+.field select,
 .field textarea {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 0.85rem 1rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--c-line);
   background: rgba(18, 14, 11, 0.6);
   color: var(--c-text);
+  font: inherit;
   transition: border-color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out);
 }
 .field input:focus,
+.field select:focus,
 .field textarea:focus {
   outline: none;
   border-color: var(--c-accent);
   background: rgba(18, 14, 11, 0.9);
+}
+
+/* Safari на iOS красит текст в полях по-своему и умеет его «терять»
+   на тёмном фоне — поле даты выглядело пустым */
+.field input,
+.field select,
+.field textarea { -webkit-text-fill-color: var(--c-text); }
+
+/* Список времени: убираем системную стрелку и рисуем свою, иначе
+   в Safari поле выглядит чужеродно рядом с остальными */
+.field select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 2.4rem;
+  background-image: linear-gradient(45deg, transparent 50%, var(--c-text-muted) 50%),
+                    linear-gradient(135deg, var(--c-text-muted) 50%, transparent 50%);
+  background-position: calc(100% - 1.15rem) calc(50% + 2px), calc(100% - 0.85rem) calc(50% + 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+.field select option { background: #17110C; color: var(--c-text); }
+
+/* Поле даты в iOS шире контейнера, пока ему не снять системное оформление.
+   Правило только для Safari/iOS: в Chrome оно убрало бы иконку календаря. */
+@supports (-webkit-touch-callout: none) {
+  .field input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 3.25rem;
+  }
 }
 .field textarea { resize: vertical; min-height: 96px; }
 
@@ -413,6 +465,7 @@
 
 .field__error { font-size: 0.8rem; color: #E98A7A; min-height: 1em; }
 .field.has-error input,
+.field.has-error select,
 .field.has-error textarea { border-color: #E98A7A; }
 
 .form__foot {
