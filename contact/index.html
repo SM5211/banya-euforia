@@ -25,13 +25,13 @@
 <meta name="theme-color" content="#120E0B">
 
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/css/fonts.css?v=25">
-<link rel="stylesheet" href="../vendor/lenis.css?v=25">
-<link rel="stylesheet" href="../assets/css/base.css?v=25">
-<link rel="stylesheet" href="../assets/css/layout.css?v=25">
-<link rel="stylesheet" href="../assets/css/components.css?v=25">
-<link rel="stylesheet" href="../assets/css/sections.css?v=25">
-<link rel="stylesheet" href="../assets/css/pages.css?v=25">
+<link rel="stylesheet" href="../assets/css/fonts.css?v=26">
+<link rel="stylesheet" href="../vendor/lenis.css?v=26">
+<link rel="stylesheet" href="../assets/css/base.css?v=26">
+<link rel="stylesheet" href="../assets/css/layout.css?v=26">
+<link rel="stylesheet" href="../assets/css/components.css?v=26">
+<link rel="stylesheet" href="../assets/css/sections.css?v=26">
+<link rel="stylesheet" href="../assets/css/pages.css?v=26">
 
 <!-- Прячем блоки до инициализации анимации, но только если JS включён -->
 <script>document.documentElement.classList.add('js-reveal-ready');</script>
@@ -113,7 +113,12 @@
              TODO: подключить реальный приём заявок — добавить сюда атрибут
              data-endpoint="https://formspree.io/f/ВАШ_ID" (или адрес своего
              обработчика для Telegram-бота). Пока форма работает как заглушка. -->
-        <form class="form" data-booking-form novalidate data-reveal="up">
+        <!-- data-endpoint — адрес скрипта, который кладёт заявку в Google-таблицу
+             «Эйфория — заявки с сайта». Если его убрать, форма вернётся к прежнему
+             способу: скопировать текст и отправить в Instagram.
+             Скрипт живёт в самой таблице: Расширения → Apps Script. -->
+        <form class="form" data-booking-form novalidate data-reveal="up"
+              data-endpoint="https://script.google.com/macros/s/AKfycbxxA2cPbT3eCiiAYPmNK8JB8EDKy1WsXVj_uVrLb0giGGaKCuSgxeJa-32Ox1HSzrgz2g/exec">
           <h2 id="booking-title" style="font-size: 1.5rem; margin-bottom: 1.4rem;">Заявка на бронь</h2>
           <p class="muted" style="margin: -0.6rem 0 1.4rem; font-size: 0.93rem;">Заполните поля — отправим заявку в наш Instagram или WhatsApp.</p>
 
@@ -973,19 +978,19 @@
   </ul>
 </div>
 
-<script src="../vendor/gsap.min.js?v=25" defer></script>
-<script src="../vendor/ScrollTrigger.min.js?v=25" defer></script>
-<script src="../vendor/lenis.min.js?v=25" defer></script>
-<script src="../assets/js/motion.js?v=25" defer></script>
-<script src="../assets/js/lenis-init.js?v=25" defer></script>
-<script src="../assets/js/reveal.js?v=25" defer></script>
-<script src="../assets/js/fx/ripple.js?v=25" defer></script>
-<script src="../assets/js/fx/steam.js?v=25" defer></script>
-<script src="../assets/js/fx/embers.js?v=25" defer></script>
-<script src="../assets/js/hero-video.js?v=25" defer></script>
-<script src="../assets/js/lightbox.js?v=25" defer></script>
-<script src="../assets/js/booking-form.js?v=25" defer></script>
-<script src="../assets/js/analytics.js?v=25" defer></script>
-<script src="../assets/js/app.js?v=25" defer></script>
+<script src="../vendor/gsap.min.js?v=26" defer></script>
+<script src="../vendor/ScrollTrigger.min.js?v=26" defer></script>
+<script src="../vendor/lenis.min.js?v=26" defer></script>
+<script src="../assets/js/motion.js?v=26" defer></script>
+<script src="../assets/js/lenis-init.js?v=26" defer></script>
+<script src="../assets/js/reveal.js?v=26" defer></script>
+<script src="../assets/js/fx/ripple.js?v=26" defer></script>
+<script src="../assets/js/fx/steam.js?v=26" defer></script>
+<script src="../assets/js/fx/embers.js?v=26" defer></script>
+<script src="../assets/js/hero-video.js?v=26" defer></script>
+<script src="../assets/js/lightbox.js?v=26" defer></script>
+<script src="../assets/js/booking-form.js?v=26" defer></script>
+<script src="../assets/js/analytics.js?v=26" defer></script>
+<script src="../assets/js/app.js?v=26" defer></script>
 </body>
 </html>
