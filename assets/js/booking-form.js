@@ -300,12 +300,14 @@
       var endpoint = form.dataset.endpoint;
       if (!endpoint) return Promise.reject(new Error('endpoint не задан'));
 
-      /* Google выполняет обращения к скрипту по очереди: если две заявки
-         придут почти одновременно, вторая ждёт первую. Обычно это 1–3 секунды,
-         но в худшем случае бывает и двадцать. Держать гостя на «Отправляем…»
-         бесконечно нельзя — через 20 секунд сдаёмся и предлагаем Instagram. */
+      /* Google выполняет обращения к скрипту по очереди: если несколько заявок
+         придут подряд, каждая следующая ждёт предыдущую. Обычно ответ за 2–6
+         секунд, но при наплыве бывает и полминуты. Ждём до 45 секунд — лучше
+         подождать, чем зря погнать гостя звонить; дальше сдаёмся.
+         Обрыв ожидания не отменяет запись: Google всё равно дописывает строку,
+         так что заявка не пропадёт, в худшем случае продублируется звонком. */
       var stop = window.AbortController ? new AbortController() : null;
-      var timer = setTimeout(function () { if (stop) stop.abort(); }, 20000);
+      var timer = setTimeout(function () { if (stop) stop.abort(); }, 45000);
 
       return fetch(endpoint, {
         method: 'POST',
@@ -337,7 +339,7 @@
       if (!isValid()) return;
 
       submitBtn.disabled = true;
-      setStatus('Отправляем заявку…', 'pending');
+      setStatus('Отправляем заявку… это занимает несколько секунд', 'pending');
 
       sendToSheet('сайт').then(function () {
         form.reset();
