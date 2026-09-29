@@ -271,6 +271,61 @@
       return lines.join('\n');
     }
 
+    /* --- Отправка в таблицу ---------------------------------------------- */
+
+    /* Собирает заявку в поля таблицы. FormData здесь не годится: плашка
+       с меню живёт вне <form>, и выбранные блюда в неё не попадают. */
+    function sheetPayload(source) {
+      var get = function (name) {
+        var el = form.querySelector('[name="' + name + '"]');
+        return el ? el.value.trim() : '';
+      };
+      var date = get('date');
+      if (date) {
+        var p = date.split('-');
+        date = p[2] + '.' + p[1] + '.' + p[0];
+      }
+      var dishes = pickedDishes();
+      return {
+        name: get('name'),
+        phone: get('phone'),
+        date: date,
+        time: get('time'),
+        guests: get('guests'),
+        comment: get('comment'),
+        dishes: dishes.map(function (d) {
+          return d.name + ' (' + d.portion + ') × ' + d.qty;
+        }).join('; '),
+        total: dishes.reduce(function (n, d) { return n + d.sum; }, 0),
+        source: source
+      };
+    }
+
+    /* Content-Type намеренно text/plain: с application/json браузер сначала
+       шлёт проверочный OPTIONS-запрос, а веб-приложение Google на него
+       не отвечает, и отправка падает. Тело при этом обычный JSON. */
+    function sendToSheet(source) {
+      var endpoint = form.dataset.endpoint;
+      if (!endpoint) return Promise.reject(new Error('endpoint не задан'));
+      return fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(sheetPayload(source))
+      }).then(function (res) {
+        if (!res.ok) throw new Error('таблица ответила ' + res.status);
+        return res;
+      });
+    }
+
+    /* После успешной отправки счётчики порций надо обнулить руками:
+       form.reset() до них не дотянется, плашка меню лежит вне формы */
+    function resetDishes() {
+      document.querySelectorAll('[data-dish] .stepper__value').forEach(function (i) {
+        i.value = 0;
+      });
+      updatePreorder();
+    }
+
     /* --- Отправка -------------------------------------------------------- */
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -279,26 +334,28 @@
       var text = buildText();
       var endpoint = form.dataset.endpoint;
 
-      /* Если подключён бэкенд — отправляем туда и Instagram не трогаем */
+      /* Если подключена таблица — заявка уходит туда сама, и гостю
+         ничего копировать не нужно. Instagram в этом случае не открываем. */
       if (endpoint) {
-        var data = {};
-        new FormData(form).forEach(function (value, key) { data[key] = value; });
         submitBtn.disabled = true;
         setStatus('Отправляем заявку…', 'pending');
-        fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(data)
-        }).then(function (res) {
-          if (!res.ok) throw new Error('bad status ' + res.status);
+
+        sendToSheet('сайт').then(function () {
           form.reset();
+          resetDishes();
           submitBtn.disabled = false;
           if (EUF.goal) EUF.goal('booking_sent');
           setStatus('Заявка принята! Перезвоним, чтобы подтвердить время.', 'success');
         }).catch(function (err) {
+          /* Таблица недоступна — не теряем заявку: возвращаемся к старому
+             способу через Instagram, чтобы гость всё-таки до нас достучался */
           console.error(err);
           submitBtn.disabled = false;
-          setStatus('Не получилось отправить. Позвоните нам: 58-25-25', 'error');
+          var ok = copySync(text);
+          if (!ok) copyToClipboard(text).catch(function () {});
+          showCopyModal(text, ok);
+          setStatus('Отправить автоматически не вышло. Текст заявки скопирован — '
+            + 'вставьте его в Instagram или позвоните: 58-25-25', 'pending');
         });
         return;
       }
@@ -375,6 +432,11 @@
       waBtn.addEventListener('click', function () {
         if (!isValid()) return;
         if (EUF.goal) EUF.goal('booking_sent');
+        /* Заявку дублируем в таблицу, чтобы в ней была вся история, в том
+           числе те гости, кто предпочёл дописать что-то в WhatsApp.
+           Не ждём ответа: чат должен открыться сразу по клику, иначе
+           браузер посчитает окно всплывающим и заблокирует его. */
+        if (form.dataset.endpoint) sendToSheet('whatsapp').catch(function () {});
         window.open('https://wa.me/' + WHATSAPP_PHONE + '?text=' + encodeURIComponent(buildText()), '_blank', 'noopener');
         setStatus('Открыли WhatsApp — текст заявки уже подставлен, осталось отправить.', 'success');
       });
