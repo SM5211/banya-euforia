@@ -307,13 +307,26 @@
     function sendToSheet(source) {
       var endpoint = form.dataset.endpoint;
       if (!endpoint) return Promise.reject(new Error('endpoint не задан'));
+
+      /* Google выполняет обращения к скрипту по очереди: если две заявки
+         придут почти одновременно, вторая ждёт первую. Обычно это 1–3 секунды,
+         но в худшем случае бывает и двадцать. Держать гостя на «Отправляем…»
+         бесконечно нельзя — через 20 секунд сдаёмся и предлагаем Instagram. */
+      var stop = window.AbortController ? new AbortController() : null;
+      var timer = setTimeout(function () { if (stop) stop.abort(); }, 20000);
+
       return fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(sheetPayload(source))
+        body: JSON.stringify(sheetPayload(source)),
+        signal: stop ? stop.signal : undefined
       }).then(function (res) {
+        clearTimeout(timer);
         if (!res.ok) throw new Error('таблица ответила ' + res.status);
         return res;
+      }, function (err) {
+        clearTimeout(timer);
+        throw err;
       });
     }
 
