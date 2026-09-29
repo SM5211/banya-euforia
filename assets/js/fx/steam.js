@@ -11,6 +11,9 @@
 (function (EUF) {
   'use strict';
 
+  /* Радиус, в котором пар реагирует на палец (px) */
+  var PTR_RADIUS = 150;
+
   EUF.createSteam = function (canvas, options) {
     if (!canvas || EUF.reducedMotion) return null;
 
@@ -30,6 +33,18 @@
     var running = false;
     var rafId = null;
     var lastTime = 0;
+
+    /* Курсор (или палец) расталкивает пар — как ладонь над паром.
+       Храним координаты в пикселях экрана, в координаты canvas переводим
+       один раз за кадр: getBoundingClientRect в обработчике движения
+       заставлял бы браузер пересчитывать раскладку на каждое шевеление. */
+    var ptrClientX = null, ptrClientY = null, ptrIdle = 0;
+
+    window.addEventListener('pointermove', function (e) {
+      ptrClientX = e.clientX;
+      ptrClientY = e.clientY;
+      ptrIdle = 0;
+    }, { passive: true });
 
     /* На мобильных и слабых машинах клубов заметно меньше */
     var baseCount = EUF.isWeakDevice ? 9 : 18;
@@ -77,6 +92,23 @@
       ctx.clearRect(0, 0, w, h);
       ctx.globalCompositeOperation = 'lighter';
 
+      /* Где сейчас палец относительно холста. Если им давно не двигали —
+         влияние плавно сходит на нет, иначе пар «помнит» последнюю точку */
+      var px = null, py = null, push = 0;
+      if (ptrClientX !== null) {
+        ptrIdle += dt;
+        if (ptrIdle > 1.6) {
+          ptrClientX = ptrClientY = null;
+        } else {
+          var box = canvas.getBoundingClientRect();
+          px = ptrClientX - box.left;
+          py = ptrClientY - box.top;
+          push = ptrIdle < 1 ? 1 : (1.6 - ptrIdle) / 0.6;
+          /* палец далеко за пределами секции — не трогаем */
+          if (px < -PTR_RADIUS || px > w + PTR_RADIUS || py < -PTR_RADIUS || py > h + PTR_RADIUS) px = null;
+        }
+      }
+
       for (var i = 0; i < puffs.length; i++) {
         var p = puffs[i];
         p.life += dt;
@@ -84,6 +116,17 @@
         p.phase += p.wobble * dt;
         p.x += (p.drift + Math.sin(p.phase) * 12) * dt;
         p.r += 6 * dt;
+
+        if (px !== null) {
+          var dx = p.x - px, dy = p.y - py;
+          var dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
+          if (dist < PTR_RADIUS) {
+            /* сила падает к краю зоны; клуб отходит в сторону и чуть вверх */
+            var force = (1 - dist / PTR_RADIUS) * push;
+            p.x += (dx / dist) * force * 90 * dt;
+            p.y += (dy / dist) * force * 40 * dt;
+          }
+        }
 
         /* плавное появление и растворение по краям жизни клуба */
         var t = p.life / p.ttl;

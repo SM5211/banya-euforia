@@ -52,6 +52,32 @@
       }));
     });
 
+    /* Заголовки собираются по словам: фраза читается как произнесённая,
+       а не появляется плитой. Разбиваем только когда GSAP жив и движение
+       разрешено — иначе выше по коду мы уже вышли и текст остался целым. */
+    document.querySelectorAll('h1, h2').forEach(function (title) {
+      /* снимаем стартовую прозрачность из CSS — она нужна была только до
+         инициализации. Делаем это раньше любых проверок: заголовок обязан
+         стать видимым, даже если анимацию к нему не применяем */
+      gsap.set(title, { opacity: 1 });
+
+      if (title.classList.contains('visually-hidden')) return;
+      if (title.closest('.modal, .menu-modal, .lightbox')) return;
+
+      var words = splitWords(title);
+      if (words.length < 2) return;
+
+      gsap.from(words, {
+        yPercent: 55,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        stagger: 0.045,
+        scrollTrigger: { trigger: title, start: 'top 88%', once: true },
+        clearProps: 'transform,opacity'
+      });
+    });
+
     /* Параллакс: двигаем только transform, без перерасчёта раскладки */
     parallax.forEach(function (el) {
       var strength = parseFloat(el.dataset.parallax) || 0.12;
@@ -81,6 +107,35 @@
       });
     });
   };
+
+  /* Оборачивает каждое слово в <span class="word">, не ломая вложенную
+     разметку: <em> внутри заголовка остаётся <em>, пробелы сохраняются. */
+  function splitWords(root) {
+    var words = [];
+
+    (function walk(node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (child) {
+        if (child.nodeType === 3) {
+          if (!child.textContent.trim()) return;
+          var frag = document.createDocumentFragment();
+          child.textContent.split(/(\s+)/).forEach(function (part) {
+            if (!part) return;
+            if (!part.trim()) { frag.appendChild(document.createTextNode(part)); return; }
+            var span = document.createElement('span');
+            span.className = 'word';
+            span.textContent = part;
+            frag.appendChild(span);
+            words.push(span);
+          });
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === 1 && child.tagName !== 'BR') {
+          walk(child);
+        }
+      });
+    })(root);
+
+    return words;
+  }
 
   function formatValue(el, value) {
     var decimals = Number(el.dataset.countDecimals || 0);

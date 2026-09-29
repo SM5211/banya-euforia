@@ -40,6 +40,10 @@
   align-items: baseline;
   gap: 0.55rem;
   margin-right: auto;
+  /* Текст логотипа сам по себе 24px — для пальца мало. Тянем зону нажатия
+     до 44px, не трогая внешний вид: выравнивание по baseline сохраняем */
+  min-height: 44px;
+  padding-block: 0.5rem;
 }
 
 .logo__name {
@@ -183,6 +187,14 @@
   gap: 0.9rem;
   color: var(--c-text-muted);
   font-size: 0.95rem;
+}
+
+/* Телефоны в подвале меню были высотой 25px — мимо такой строки легко
+   промахнуться пальцем. Расширяем зону нажатия до 44px */
+.mobile-menu__foot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 
 /* --- Плавающая кнопка быстрой связи -------------------------------------- */

@@ -57,6 +57,12 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* Декоративное свечение за фото шире своего блока и на планшетах
+     (768–1100px) вылезало за край — страницу можно было утащить вбок
+     на 45px. overflow-x у body это не ловило: прокручивался сам html.
+     clip, а не hidden: hidden сделал бы html скролл-контейнером
+     и сломал бы плавную прокрутку Lenis и sticky-элементы. */
+  overflow-x: clip;
 }
 
 /* Lenis сам управляет скроллом — нативный smooth в этом случае мешает */
@@ -99,6 +105,11 @@ h1, h2, h3, h4 {
 h1 { font-size: clamp(2.4rem, 1.6rem + 2.6vw, 4.4rem); }
 h2 { font-size: clamp(2rem, 1.4rem + 2.6vw, 3.6rem); }
 h3 { font-size: clamp(1.35rem, 1.15rem + 0.9vw, 1.85rem); }
+
+/* Слова заголовка, разобранные для анимации появления (см. reveal.js).
+   Без JS и при «уменьшить движение» разбора не происходит вовсе,
+   поэтому здесь только то, что нужно для сдвига по вертикали. */
+.word { display: inline-block; }
 
 p { margin: 0 0 1.1em; }
 p:last-child { margin-bottom: 0; }

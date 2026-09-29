@@ -414,6 +414,14 @@
   align-items: stretch;
 }
 
+/* Телефоны в списке контактов — та же история, что и в мобильном меню:
+   строка 24px, попасть пальцем тяжело */
+.info__grid a[href^="tel:"] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 .info__list {
   list-style: none;
   margin: 2rem 0 0;
