@@ -2,30 +2,23 @@
    Форма заявки на бронь: валидация + отправка.
 
    КУДА УХОДЯТ ЗАЯВКИ
-   По умолчанию — в Instagram Direct комплекса (@banya_euforia_).
-   Важно понимать ограничение самого Instagram: он НЕ умеет принимать текст
-   по ссылке, предзаполнить сообщение нельзя. Поэтому кнопка делает так:
-     1) собирает заявку в аккуратный текст;
-     2) копирует его в буфер обмена гостя;
-     3) открывает чат Instagram — гостю остаётся вставить и отправить.
-   Если буфер недоступен (старый браузер, отказ в правах), текст показывается
-   прямо на странице, чтобы его можно было скопировать руками.
+   Гость нажимает «Оставить заявку» — она уходит в Google-таблицу
+   «Эйфория — заявки с сайта» и там же появляется строкой со статусом «Новая».
+   Ни Instagram, ни WhatsApp в этом не участвуют: гостю не нужно ничего
+   копировать и никуда переходить.
 
-   Кнопка «Отправить в WhatsApp» рядом работает без этих плясок: WhatsApp
-   подставляет весь текст сам.
+   Адрес приёмника задан в разметке, атрибутом тега <form>:
+       <form data-booking-form data-endpoint="https://script.google.com/…/exec">
+   Сам приёмник — скрипт внутри таблицы (Расширения → Apps Script),
+   его исходник лежит в соседней папке banya-euforia-заявки.
 
-   ЕСЛИ ЗАХОТИТЕ ПОЛНОЦЕННУЮ ОТПРАВКУ (заявка приходит сама, без участия гостя):
-   заведите форму на formspree.io или свой обработчик для Telegram-бота
-   и допишите тегу <form> в contact/index.html адрес:
-       <form data-booking-form data-endpoint="https://formspree.io/f/ВАШ_ID" ...>
-   Тогда код ниже отправит заявку туда, а Instagram открывать не станет.
+   ЕСЛИ ТАБЛИЦА НЕДОСТУПНА (нет сети, скрипт сломан, Google молчит дольше
+   20 секунд) — заявку не теряем: текст показывается прямо на странице
+   и копируется в буфер, а гостя просим позвонить.
    ========================================================================== */
 
 (function (EUF) {
   'use strict';
-
-  var INSTAGRAM_DM = 'https://ig.me/m/banya_euforia_';
-  var WHATSAPP_PHONE = '79643582525';   // WhatsApp комплекса
 
   EUF.initBookingForm = function () {
     var form = document.querySelector('[data-booking-form]');
@@ -33,7 +26,6 @@
 
     var status = form.querySelector('[data-form-status]');
     var submitBtn = form.querySelector('[type="submit"]');
-    var waBtn = form.querySelector('[data-send-whatsapp]');
     var copyBox = form.querySelector('[data-copy-box]');
 
     /* Дату в прошлом выбрать нельзя */
@@ -344,116 +336,30 @@
       e.preventDefault();
       if (!isValid()) return;
 
-      var text = buildText();
-      var endpoint = form.dataset.endpoint;
+      submitBtn.disabled = true;
+      setStatus('Отправляем заявку…', 'pending');
 
-      /* Если подключена таблица — заявка уходит туда сама, и гостю
-         ничего копировать не нужно. Instagram в этом случае не открываем. */
-      if (endpoint) {
-        submitBtn.disabled = true;
-        setStatus('Отправляем заявку…', 'pending');
-
-        sendToSheet('сайт').then(function () {
-          form.reset();
-          resetDishes();
-          submitBtn.disabled = false;
-          if (EUF.goal) EUF.goal('booking_sent');
-          setStatus('Заявка принята! Перезвоним, чтобы подтвердить время.', 'success');
-        }).catch(function (err) {
-          /* Таблица недоступна — не теряем заявку: возвращаемся к старому
-             способу через Instagram, чтобы гость всё-таки до нас достучался */
-          console.error(err);
-          submitBtn.disabled = false;
-          var ok = copySync(text);
-          if (!ok) copyToClipboard(text).catch(function () {});
-          showCopyModal(text, ok);
-          setStatus('Отправить автоматически не вышло. Текст заявки скопирован — '
-            + 'вставьте его в Instagram или позвоните: 58-25-25', 'pending');
-        });
-        return;
-      }
-
-      /* ВАЖЕН ПОРЯДОК. Сначала копируем — синхронно, пока страница ещё в фокусе.
-         Если сперва открыть чат, браузер уводит фокус на Instagram и запрещает
-         запись в буфер обмена — текст не скопируется. */
-      var copied = copySync(text);
-      if (!copied) copyToClipboard(text).catch(function () {});
-
-      EUF.goal && EUF.goal('booking_sent');
-
-      /* Чат Instagram открываем не сразу, а по кнопке в плашке: гость должен
-         увидеть, что текст скопирован и его нужно вставить. Клик по кнопке
-         в плашке — тоже жест пользователя, поэтому окно не блокируется. */
-      showCopyModal(text, copied);
-      setStatus(copied
-        ? 'Текст заявки скопирован — вставьте его в чат Instagram.'
-        : 'Скопируйте текст заявки и отправьте его в Instagram.', copied ? 'success' : 'pending');
-    });
-
-    /* --- Плашка перед переходом в Instagram ------------------------------- */
-    function showCopyModal(text, copied) {
-      var modal = document.querySelector('[data-copy-modal]');
-      if (!modal) {   /* плашки на странице нет — ведём себя как раньше */
-        window.open(INSTAGRAM_DM, '_blank', 'noopener');
-        return;
-      }
-
-      modal.querySelector('[data-modal-preview]').textContent = text;
-      modal.classList.toggle('is-manual', !copied);
-      modal.querySelector('[data-modal-badge]').textContent = copied
-        ? 'Текст заявки скопирован'
-        : 'Скопируйте текст заявки';
-      modal.querySelector('[data-modal-text]').textContent = copied
-        ? 'Instagram не умеет подставлять текст сам. Откройте чат, задержите палец на поле ввода, выберите «Вставить» — и отправьте сообщение.'
-        : 'Браузер не дал скопировать автоматически. Выделите текст ниже, скопируйте его и вставьте в чат Instagram.';
-
-      modal.hidden = false;
-      document.body.classList.add('is-locked');
-      if (EUF.lenis) EUF.lenis.stop();
-      modal.querySelector('[data-modal-go]').focus();
-
-      /* Esc и клик по фону закрывают плашку */
-      document.addEventListener('keydown', onKey);
-      modal.addEventListener('click', onClick);
-
-      function onKey(e) { if (e.key === 'Escape') close(); }
-      function onClick(e) {
-        if (e.target.closest('[data-modal-close]')) { close(); return; }
-        if (e.target.closest('[data-modal-copy]')) {
-          var ok = copySync(text);
-          var badge = modal.querySelector('[data-modal-badge]');
-          badge.textContent = ok ? 'Текст скопирован ещё раз' : 'Скопируйте текст вручную';
-          modal.classList.toggle('is-manual', !ok);
-          return;
-        }
-        if (e.target.closest('[data-modal-go]')) {
-          /* ссылка откроется сама, плашку просто закрываем */
-          setTimeout(close, 100);
-        }
-      }
-      function close() {
-        modal.hidden = true;
-        document.body.classList.remove('is-locked');
-        if (EUF.lenis) EUF.lenis.start();
-        document.removeEventListener('keydown', onKey);
-        modal.removeEventListener('click', onClick);
-      }
-    }
-
-    /* Кнопка WhatsApp: там текст подставляется сам, копировать ничего не надо */
-    if (waBtn) {
-      waBtn.addEventListener('click', function () {
-        if (!isValid()) return;
+      sendToSheet('сайт').then(function () {
+        form.reset();
+        resetDishes();
+        submitBtn.disabled = false;
         if (EUF.goal) EUF.goal('booking_sent');
-        /* Заявку дублируем в таблицу, чтобы в ней была вся история, в том
-           числе те гости, кто предпочёл дописать что-то в WhatsApp.
-           Не ждём ответа: чат должен открыться сразу по клику, иначе
-           браузер посчитает окно всплывающим и заблокирует его. */
-        if (form.dataset.endpoint) sendToSheet('whatsapp').catch(function () {});
-        window.open('https://wa.me/' + WHATSAPP_PHONE + '?text=' + encodeURIComponent(buildText()), '_blank', 'noopener');
-        setStatus('Открыли WhatsApp — текст заявки уже подставлен, осталось отправить.', 'success');
+        setStatus('Заявка принята! Перезвоним, чтобы подтвердить время.', 'success');
+      }).catch(function (err) {
+        /* Заявку нельзя терять. Показываем её текст прямо на странице
+           и копируем в буфер: гость сможет продиктовать или переслать
+           её по телефону, а не уйдёт ни с чем. */
+        console.error(err);
+        submitBtn.disabled = false;
+        var text = buildText();
+        var copied = copySync(text);
+        if (!copied) copyToClipboard(text).catch(function () {});
+        showCopyBox(text, copied
+          ? 'Заявка скопирована — продиктуйте её по телефону'
+          : 'Заявка не ушла — скопируйте текст и позвоните нам');
+        setStatus('Не получилось отправить заявку. Позвоните: 58-25-25 — примем бронь сразу.', 'error');
       });
-    }
+    });
 
     /* Синхронное копирование — работает внутри клика и не зависит от того,
        успел ли браузер увести фокус в другое приложение.
