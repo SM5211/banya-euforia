@@ -295,7 +295,8 @@
 
     /* Content-Type намеренно text/plain: с application/json браузер сначала
        шлёт проверочный OPTIONS-запрос, а веб-приложение Google на него
-       не отвечает, и отправка падает. Тело при этом обычный JSON. */
+       не отвечает, и отправка падает. Тело при этом обычный JSON.
+       С text/plain запрос считается простым и уходит сразу. */
     function sendToSheet(source) {
       var endpoint = form.dataset.endpoint;
       if (!endpoint) return Promise.reject(new Error('endpoint не задан'));
@@ -310,14 +311,24 @@
       activeAbort = stop;
       var timer = setTimeout(function () { if (stop) stop.abort(); }, 45000);
 
+      /* mode: 'no-cors' — сознательно.
+         Скрипт Google отвечает не сам: он отдаёт переадресацию на
+         script.googleusercontent.com, и уже оттуда приходит текст. Заявка
+         записывается ДО этой переадресации, но сама переадресация иногда
+         отваливается с 404 — и сайт показывал «не отправилось», хотя строка
+         в таблице уже лежала. Врать гостю в эту сторону нельзя: он звонит
+         второй раз, а бронь дублируется.
+         С no-cors мы не читаем тело ответа, зато получаем честный признак:
+         запрос ушёл и Google его принял. Ошибка остаётся ошибкой только
+         тогда, когда запрос реально не доехал — нет сети, сбой DNS. */
       return fetch(endpoint, {
         method: 'POST',
+        mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(sheetPayload(source)),
         signal: stop ? stop.signal : undefined
       }).then(function (res) {
         clearTimeout(timer);
-        if (!res.ok) throw new Error('таблица ответила ' + res.status);
         return res;
       }, function (err) {
         clearTimeout(timer);
