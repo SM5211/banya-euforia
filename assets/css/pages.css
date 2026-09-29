@@ -420,6 +420,18 @@
   font: inherit;
   transition: border-color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out);
 }
+/* Подсказка в поле должна читаться как подсказка, а не как введённое
+   значение: гости принимали «Иван» и «+7 (924) 000-00-00» за готовый текст
+   и не понимали, что поле пустое. Делаем её заметно бледнее и курсивом. */
+.field input::placeholder,
+.field textarea::placeholder {
+  color: rgba(242, 237, 231, 0.26);
+  font-style: italic;
+  opacity: 1;                     /* Firefox сам приглушает — не даём дважды */
+}
+.field input:focus::placeholder,
+.field textarea:focus::placeholder { color: rgba(242, 237, 231, 0.18); }
+
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
@@ -1032,12 +1044,17 @@
 }
 
 /* Кольцо прогресса вокруг чаши: видно, что процесс идёт и сколько осталось */
+/* Не полное кольцо, а дуга с разрывом снизу — как чаша.
+   Поворот на 135° ставит начало дуги в левый нижний угол, дальше она идёт
+   по часовой на три четверти круга и обрывается справа внизу.
+   pathLength="100" в разметке позволяет считать длину в процентах
+   и не пересчитывать 2πr при смене радиуса. */
 .sending__ring {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  transform: rotate(-90deg);   /* чтобы заполнялось от двенадцати часов */
+  transform: rotate(135deg);
   overflow: visible;
 }
 
@@ -1045,29 +1062,28 @@
   fill: none;
   stroke-width: 3;
   stroke-linecap: round;
+  stroke-dasharray: 75 100;    /* видимая дуга — 75% окружности */
 }
 
 .sending__ring-track { stroke: rgba(232, 238, 240, 0.12); }
 
 .sending__ring-fill {
   stroke: var(--c-accent);
-  /* длина окружности при r=54: 2πr ≈ 339.3 */
-  stroke-dasharray: 339.3;
-  stroke-dashoffset: 339.3;
+  stroke-dashoffset: 75;       /* дуга спрятана целиком */
   filter: drop-shadow(0 0 6px rgba(224, 145, 63, 0.55));
-  /* Точного времени ответа мы не знаем, поэтому кольцо идёт асимптотой:
+  /* Точного времени ответа мы не знаем, поэтому дуга идёт асимптотой:
      первые секунды бежит, дальше всё медленнее и замирает у 93%.
      Так видно, что процесс жив, и нет вранья «осталось две секунды».
-     До конца кольцо доводит только реальный ответ (класс is-done). */
+     До конца её доводит только реальный ответ (класс is-done). */
   animation: sending-ring 16s cubic-bezier(0.05, 0.8, 0.2, 1) forwards;
 }
 
 @keyframes sending-ring {
-  from { stroke-dashoffset: 339.3 }
-  to   { stroke-dashoffset: 24 }      /* 24 из 339 — это те самые 93% */
+  from { stroke-dashoffset: 75 }
+  to   { stroke-dashoffset: 5.25 }    /* 93% от дуги */
 }
 
-/* Ответ пришёл: кольцо мгновенно дозаполняется и остаётся ободком галочки */
+/* Ответ пришёл: дуга смыкается до конца и остаётся ободком у галочки */
 .sending.is-done .sending__ring-fill {
   animation: none;
   stroke-dashoffset: 0;
@@ -1144,7 +1160,7 @@
   .sending__card,
   .sending__wisp,
   .sending__water { animation: none }
-  .sending__ring-fill { animation: none; stroke-dashoffset: 170 }
+  .sending__ring-fill { animation: none; stroke-dashoffset: 37 }
   .sending__phrase { transition: none }
   .sending.is-done .sending__check circle,
   .sending.is-done .sending__check path { animation: none; stroke-dashoffset: 0 }
