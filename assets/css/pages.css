@@ -210,9 +210,8 @@
 .lightbox__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(10, 8, 6, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  /* фон и так почти непрозрачный — размывать под ним нечего */
+  background: rgba(10, 8, 6, 0.97);
 }
 
 .lightbox__dialog {
@@ -648,8 +647,6 @@
   position: absolute;
   inset: 0;
   background: rgba(10, 8, 6, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   animation: modal-fade var(--t-med) var(--ease-out);
 }
 
@@ -793,8 +790,6 @@
   position: absolute;
   inset: 0;
   background: rgba(10, 8, 6, 0.82);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   animation: modal-fade var(--t-med) var(--ease-out);
 }
 
@@ -966,7 +961,6 @@
   position: absolute;
   inset: 0;
   background: rgba(8, 6, 4, 0.78);
-  backdrop-filter: blur(6px);
   animation: sending-in 0.35s var(--ease-out) both;
 }
 

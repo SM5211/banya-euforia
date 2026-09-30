@@ -57,6 +57,22 @@
 
       /* Нет файла или кодек не поддержан — тихо убираем видео, остаётся фото */
       video.addEventListener('error', function () { video.remove(); }, { once: true });
+
+      /* Ушли с первого экрана — ставим на паузу. Декодирование видео идёт
+         постоянно, даже когда его не видно, и на ноутбуках это заметная
+         часть тормозов при прокрутке вниз. Вернулись — продолжаем. */
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              if (video.paused && video.src) video.play().catch(function () {});
+            } else if (!video.paused) {
+              video.pause();
+            }
+          });
+        }, { threshold: 0.01 });
+        io.observe(video);
+      }
     });
   };
 })(window.EUF);

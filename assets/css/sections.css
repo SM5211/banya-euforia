@@ -45,7 +45,9 @@
 .hero__img {
   opacity: 0;
   animation: hero-slide 27s linear infinite;
-  will-change: opacity, transform;
+  /* только opacity: прежний медленный зум заставлял браузер заново
+     растрировать три полноэкранных фото в каждом кадре */
+  will-change: opacity;
 }
 
 .hero__img:nth-of-type(1) { animation-delay: 0s; }
@@ -53,11 +55,11 @@
 .hero__img:nth-of-type(3) { animation-delay: 18s; }
 
 @keyframes hero-slide {
-  0%   { opacity: 0; transform: scale(1.02); }
-  4%   { opacity: 1; }
-  33%  { opacity: 1; }
-  37%  { opacity: 0; }
-  100% { opacity: 0; transform: scale(1.12); }
+  0%   { opacity: 0 }
+  4%   { opacity: 1 }
+  33%  { opacity: 1 }
+  37%  { opacity: 0 }
+  100% { opacity: 0 }
 }
 
 /* Видео (если файл появится) перекрывает слайдер целиком */
@@ -114,9 +116,8 @@
   padding: 0.45rem 1rem 0.45rem 0.55rem;
   border-radius: 999px;
   border: 1px solid var(--c-line);
-  background: rgba(18, 14, 11, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  /* висит прямо над видео — размытие тут пересчитывалось каждый кадр */
+  background: rgba(18, 14, 11, 0.66);
   font-size: 0.85rem;
   color: var(--c-text-muted);
   margin-bottom: 1.6rem;

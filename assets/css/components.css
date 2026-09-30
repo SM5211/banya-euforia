@@ -37,12 +37,14 @@
 /* Тёплое свечение на hover — «свет из парной» */
 .btn--primary:hover { box-shadow: var(--glow-warm), 0 18px 36px -18px rgba(224, 145, 63, 0.9); }
 
+/* Без backdrop-filter. Размытие фона — самый дорогой эффект в CSS: браузер
+   заново снимает и размывает всё, что за элементом, на каждом кадре прокрутки.
+   Таких кнопок на странице до пяти, и позади них крутится видео и пар —
+   ноутбуки на этом захлёбывались. На тёмном фоне разницы не видно. */
 .btn--ghost {
-  background: rgba(232, 238, 240, 0.04);
+  background: rgba(232, 238, 240, 0.07);
   border-color: var(--c-line);
   color: var(--c-text);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 .btn--ghost:hover { border-color: var(--c-steam); background: rgba(232, 238, 240, 0.1); }
 
