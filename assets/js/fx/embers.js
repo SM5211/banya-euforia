@@ -16,7 +16,24 @@
     var ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return null;
 
-    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    /* Искры — мелкие размытые точки, удвоенное разрешение им ни к чему */
+    var dpr = 1;
+
+    /* Как и у пара: готовая картинка вместо нового градиента на каждую искру
+       в каждом кадре. Искры мелкие, но их два-три десятка. */
+    var sprite = (function () {
+      var size = 64;
+      var off = document.createElement('canvas');
+      off.width = off.height = size;
+      var octx = off.getContext('2d');
+      var g = octx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+      g.addColorStop(0, 'rgba(255, 214, 150, 0.95)');
+      g.addColorStop(0.4, 'rgba(224, 145, 63, 0.5)');
+      g.addColorStop(1, 'rgba(168, 91, 30, 0)');
+      octx.fillStyle = g;
+      octx.fillRect(0, 0, size, size);
+      return off;
+    })();
     var w = 0, h = 0, sparks = [], running = false, rafId = null, lastTime = 0;
 
     function resize() {
@@ -65,16 +82,12 @@
         var flicker = 0.65 + Math.sin(s.phase * 3) * 0.35;
         var alpha = Math.sin(Math.PI * t) * flicker;
 
-        var grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 4);
-        grad.addColorStop(0, 'rgba(255, 214, 150,' + (alpha * 0.95).toFixed(3) + ')');
-        grad.addColorStop(0.4, 'rgba(224, 145, 63,' + (alpha * 0.5).toFixed(3) + ')');
-        grad.addColorStop(1, 'rgba(168, 91, 30, 0)');
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r * 4, 0, Math.PI * 2);
-        ctx.fill();
+        var d = s.r * 8;
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(sprite, s.x - s.r * 4, s.y - s.r * 4, d, d);
       }
 
+      ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = 'source-over';
       rafId = requestAnimationFrame(step);
     }

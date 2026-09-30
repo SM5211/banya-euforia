@@ -27,7 +27,9 @@
     var ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return null;
 
-    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    /* dpr = 1 сознательно. Пар — размытые пятна без деталей, на удвоенном
+       разрешении он выглядит так же, а пикселей рисуется вчетверо больше. */
+    var dpr = 1;
     var w = 0, h = 0;
     var puffs = [];
     var running = false;
@@ -47,7 +49,27 @@
     }, { passive: true });
 
     /* На мобильных и слабых машинах клубов заметно меньше */
-    var baseCount = EUF.isWeakDevice ? 9 : 18;
+    var baseCount = EUF.isWeakDevice ? 8 : 12;
+
+    /* Клуб рисуется готовой картинкой, а не свежим градиентом каждый кадр.
+       Раньше на каждый клуб создавался createRadialGradient и заливался круг
+       радиусом до 400px с режимом lighter — на полноэкранном герое это
+       десятки мегапикселей перерисовки в каждом кадре, отчего ноутбуки
+       и захлёбывались. Спрайт готовится один раз и потом только
+       растягивается — дешёвая операция даже без ускорения. */
+    var sprite = (function () {
+      var size = 128;
+      var off = document.createElement('canvas');
+      off.width = off.height = size;
+      var octx = off.getContext('2d');
+      var g = octx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+      g.addColorStop(0, 'rgba(' + opts.tint + ',1)');
+      g.addColorStop(0.45, 'rgba(' + opts.tint + ',0.35)');
+      g.addColorStop(1, 'rgba(' + opts.tint + ',0)');
+      octx.fillStyle = g;
+      octx.fillRect(0, 0, size, size);
+      return off;
+    })();
 
     function resize() {
       var rect = canvas.getBoundingClientRect();
@@ -86,7 +108,12 @@
 
     function step(time) {
       if (!running) return;
-      var dt = lastTime ? Math.min((time - lastTime) / 1000, 0.05) : 0.016;
+
+      /* Пар ползёт медленно, разницы между 30 и 60 кадрами глазом не видно,
+         а работы ровно вдвое меньше. На ноутбуках это решает. */
+      var dt = lastTime ? (time - lastTime) / 1000 : 0.033;
+      if (lastTime && dt < 0.032) { rafId = requestAnimationFrame(step); return; }
+      dt = Math.min(dt, 0.05);
       lastTime = time;
 
       ctx.clearRect(0, 0, w, h);
@@ -138,16 +165,11 @@
           continue;
         }
 
-        var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-        grad.addColorStop(0, 'rgba(' + opts.tint + ',' + alpha.toFixed(4) + ')');
-        grad.addColorStop(0.45, 'rgba(' + opts.tint + ',' + (alpha * 0.35).toFixed(4) + ')');
-        grad.addColorStop(1, 'rgba(' + opts.tint + ',0)');
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(sprite, p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
       }
 
+      ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = 'source-over';
       rafId = requestAnimationFrame(step);
     }

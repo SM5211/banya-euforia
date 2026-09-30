@@ -225,8 +225,10 @@
 .intro__media-glow {
   position: absolute;
   inset: 10% -6% -8% 8%;
-  background: radial-gradient(circle, rgba(224, 145, 63, 0.28), transparent 65%);
-  filter: blur(30px);
+  /* Раньше поверх градиента стоял filter: blur(30px). Градиент и так мягкий,
+     а размытие заставляло браузер пересчитывать большую область при каждой
+     перерисовке — заметная нагрузка на ноутбуках. Растянули сам градиент. */
+  background: radial-gradient(circle, rgba(224, 145, 63, 0.26), rgba(224, 145, 63, 0.10) 45%, transparent 72%);
   z-index: 0;
 }
 
@@ -285,19 +287,23 @@
   position: absolute;
   inset: 20% -10% -12% 10%;
   z-index: 0;
-  background: radial-gradient(circle, rgba(224, 145, 63, 0.35), transparent 68%);
-  filter: blur(34px);
-  animation: hearth 6s ease-in-out infinite alternate;
+  /* Без filter: blur — мягкость даёт сам градиент. Размытие большой области
+     пересчитывалось на каждом кадре дыхания и вместе с паром роняло ноутбуки. */
+  background: radial-gradient(circle, rgba(224, 145, 63, 0.32), rgba(224, 145, 63, 0.12) 42%, transparent 70%);
+  /* Дышим только прозрачностью: масштаб заставлял перерисовывать слой,
+     opacity браузер умеет менять без перерисовки вообще. */
+  animation: hearth 7s ease-in-out infinite alternate;
+  will-change: opacity;
 }
 
 @keyframes hearth {
-  from { opacity: 0.55; transform: scale(0.97); }
-  to   { opacity: 1; transform: scale(1.03); }
+  from { opacity: 0.5 }
+  to   { opacity: 1 }
 }
 
 /* Холодное свечение у бассейна — вода вместо огня */
 .showcase__glow--water {
-  background: radial-gradient(circle, rgba(159, 195, 204, 0.3), transparent 68%);
+  background: radial-gradient(circle, rgba(159, 195, 204, 0.28), rgba(159, 195, 204, 0.10) 42%, transparent 70%);
   animation-duration: 8s;
 }
 

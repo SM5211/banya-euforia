@@ -11,10 +11,12 @@
 (function (EUF) {
   'use strict';
 
+  /* Смещения намеренно небольшие, а длительность заметная: блок, который
+     проезжает 46px за секунду, на телефоне читается как рывок. */
   var PRESETS = {
-    up:    { y: 46, opacity: 0 },
+    up:    { y: 30, opacity: 0 },
     fade:  { opacity: 0 },
-    scale: { scale: 1.06, opacity: 0 }
+    scale: { scale: 1.04, opacity: 0 }
   };
 
   EUF.initReveal = function () {
@@ -43,10 +45,11 @@
       gsap.set(targets, { opacity: 1 });
 
       gsap.from(targets, Object.assign({}, from, {
-        duration: 0.95,
+        duration: 1.15,
         delay: delay,
-        ease: 'power3.out',
-        stagger: el.hasAttribute('data-reveal-stagger') ? 0.1 : 0,
+        /* power3 тормозит слишком резко на старте — power2 мягче */
+        ease: 'power2.out',
+        stagger: el.hasAttribute('data-reveal-stagger') ? 0.09 : 0,
         scrollTrigger: { trigger: el, start: 'top 85%', once: true },
         clearProps: 'transform'
       }));
@@ -68,11 +71,11 @@
       if (words.length < 2) return;
 
       gsap.from(words, {
-        yPercent: 55,
+        yPercent: 28,
         opacity: 0,
-        duration: 0.7,
-        ease: 'power3.out',
-        stagger: 0.045,
+        duration: 0.9,
+        ease: 'power2.out',
+        stagger: 0.05,
         scrollTrigger: { trigger: title, start: 'top 88%', once: true },
         clearProps: 'transform,opacity'
       });
